@@ -1,0 +1,330 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.summaryCard {
+  margin: $spacing-md $page-padding;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg $spacing-md;
+  box-shadow: 0 8rpx 24rpx rgba(46, 125, 91, 0.25);
+}
+
+.summaryTitle {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: $spacing-md;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-sm;
+}
+
+.summaryItem {
+  text-align: center;
+  padding: $spacing-sm 0;
+}
+
+.summaryValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  line-height: 1.2;
+  margin-bottom: 4rpx;
+}
+
+.summaryLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.tabs {
+  display: flex;
+  padding: 0 $page-padding;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  overflow-x: auto;
+  @include scroll-x-container;
+}
+
+.tab {
+  @include scroll-x-item(auto);
+  padding: 14rpx 28rpx;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all $transition-base;
+  border: 2rpx solid transparent;
+
+  &.active {
+    background: $color-primary;
+    color: $color-text-white;
+    border-color: transparent;
+    box-shadow: 0 4rpx 12rpx rgba(46, 125, 91, 0.25);
+    font-weight: $font-weight-medium;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.list {
+  padding: 0 $page-padding;
+}
+
+.recordCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.995);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  padding-bottom: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+  margin-bottom: $spacing-md;
+}
+
+.imageWrap {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $color-bg-hover;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.headerInfo {
+  flex: 1;
+  margin-left: $spacing-md;
+  min-width: 0;
+}
+
+.toolRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+}
+
+.toolName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  flex: 1;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs $spacing-md;
+  margin-top: $spacing-xs;
+}
+
+.metaItem {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: flex;
+  align-items: center;
+}
+
+.metaIcon {
+  margin-right: 4rpx;
+  font-size: $font-size-sm;
+}
+
+.dateSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $color-primary-bg;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+}
+
+.dateLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.dateValue {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-primary;
+}
+
+.dateArrow {
+  color: $color-primary;
+  font-weight: $font-weight-bold;
+  margin: 0 $spacing-sm;
+}
+
+.purposeBox {
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+}
+
+.purposeLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-xs;
+}
+
+.purposeText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
+.bottomBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.depositInfo {
+  display: flex;
+  align-items: baseline;
+}
+
+.depositLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-right: 6rpx;
+}
+
+.depositValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-deposit;
+}
+
+.depositUnit {
+  font-size: $font-size-xs;
+  color: $color-deposit;
+  margin-left: 2rpx;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.btn {
+  @include button-reset;
+  height: $button-height-sm;
+  padding: 0 $spacing-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+
+  &.btnPrimary {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+  }
+
+  &.btnGhost {
+    background: transparent;
+    color: $color-text-secondary;
+    border: 2rpx solid $color-border;
+  }
+
+  &.btnDanger {
+    background: transparent;
+    color: $color-error;
+    border: 2rpx solid rgba(255, 77, 79, 0.3);
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  font-size: $font-size-sm;
+}
+
+.detailLabel {
+  color: $color-text-tertiary;
+}
+
+.detailValue {
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.returnedInfo {
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-top: $spacing-sm;
+}
+
+.returnTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  display: flex;
+  align-items: center;
+}
+
+.returnIcon {
+  margin-right: 8rpx;
+}
+
+.conditionBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+
+  &.good {
+    background: rgba(82, 196, 26, 0.1);
+    color: $color-success;
+  }
+  &.damaged {
+    background: rgba(250, 173, 20, 0.1);
+    color: $color-warning;
+  }
+  &.lost {
+    background: rgba(255, 77, 79, 0.1);
+    color: $color-error;
+  }
+}

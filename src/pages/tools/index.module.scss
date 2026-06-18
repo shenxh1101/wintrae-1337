@@ -1,0 +1,177 @@
+@use '@/styles/variables.scss' as *;
+
+.header {
+  padding: $spacing-lg $page-padding 0;
+  margin: 0 (-$page-padding) $spacing-lg;
+  background: linear-gradient(180deg, $color-primary 0%, rgba(46, 125, 91, 0.7) 100%);
+  padding-bottom: $spacing-xl;
+  border-radius: 0 0 $radius-xl $radius-xl;
+}
+
+.greeting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.greetingLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.hello {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: $spacing-xs;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  @include text-ellipsis;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  margin-top: $spacing-xs;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  padding: 0 $spacing-lg;
+  height: 88rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.searchIcon {
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
+  margin-right: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  height: 100%;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  background: transparent;
+}
+
+.statsRow {
+  display: flex;
+  margin-top: $spacing-lg;
+  gap: $spacing-sm;
+}
+
+.statCard {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-sm;
+  text-align: center;
+  backdrop-filter: blur(10rpx);
+}
+
+.statValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  line-height: 1.2;
+  margin-bottom: 4rpx;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.section {
+  margin-bottom: $spacing-lg;
+}
+
+.filterWrap {
+  margin: 0 (-$page-padding) $spacing-md;
+  padding: 0 $page-padding;
+}
+
+.categoryScroll {
+  @include scroll-x-container;
+  width: calc(100% + #{$page-padding * 2});
+  margin: 0 (-$page-padding) $spacing-md;
+  padding: 0 $page-padding $spacing-xs;
+}
+
+.categoryChip {
+  @include scroll-x-item(auto);
+  display: inline-flex;
+  align-items: center;
+  padding: 16rpx 28rpx;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  margin-right: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  white-space: nowrap;
+  transition: all $transition-base;
+  border: 2rpx solid transparent;
+
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    border-color: transparent;
+    box-shadow: 0 4rpx 12rpx rgba(46, 125, 91, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.locationSelect {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  width: fit-content;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.locationIcon {
+  margin-right: 8rpx;
+  color: $color-primary;
+}
+
+.locationArrow {
+  margin-left: 8rpx;
+  color: $color-text-tertiary;
+  font-size: $font-size-md;
+}
+
+.listWrap {
+  padding-top: $spacing-xs;
+}

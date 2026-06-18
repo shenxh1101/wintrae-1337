@@ -1,0 +1,43 @@
+// ============================================
+// 主题配色变量
+// ============================================
+
+// 品牌主题色：森林绿 - 代表共享、环保、社区
+$color-primary: #2E7D5B;
+$color-primary-light: #52A67E;
+$color-primary-dark: #1E5A41;
+$color-primary-bg: rgba(46, 125, 91, 0.08);
+
+// 功能色
+$color-success: #52C41A;
+$color-warning: #FAAD14;
+$color-error: #FF4D4F;
+$color-info: #165DFF;
+
+// 辅助色
+$color-accent: #FFA940;
+$color-accent-light: #FFD591;
+
+// 背景色
+$color-bg-page: #F5F7F5;
+$color-bg-card: #FFFFFF;
+$color-bg-hover: #F2F3F5;
+
+// 文本色
+$color-text-primary: #1F2937;
+$color-text-secondary: #4B5563;
+$color-text-tertiary: #9CA3AF;
+$color-text-disabled: #C9CDD4;
+$color-text-white: #FFFFFF;
+
+// 边框色
+$color-border: #E5E7EB;
+$color-divider: #F2F3F5;
+
+// 业务色
+$color-deposit: #F5222D;
+$color-tag-bg: #E6F4EC;
+$color-tag-text: #2E7D5B;
+$color-available: #52C41A;
+$color-borrowed: #FF4D4F;
+$color-maintenance: #FAAD14;

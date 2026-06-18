@@ -1,0 +1,333 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.toolBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $page-padding;
+  overflow-x: auto;
+  background: $color-bg-page;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  @include scroll-x-container;
+}
+
+.toolChip {
+  @include scroll-x-item(auto);
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  border: 2rpx solid transparent;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all $transition-base;
+
+  &.active {
+    background: $color-primary-bg;
+    color: $color-primary;
+    border-color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.calendarCard {
+  margin: 0 $page-padding $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.navBtn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-round;
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+
+  &:active {
+    background: rgba(46, 125, 91, 0.15);
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+}
+
+.monthTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: $spacing-sm;
+}
+
+.weekday {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  padding: $spacing-sm 0;
+  font-weight: $font-weight-medium;
+
+  &.weekend {
+    color: $color-error;
+  }
+}
+
+.datesGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8rpx;
+}
+
+.dateCell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-md;
+  position: relative;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &.empty {
+    pointer-events: none;
+  }
+
+  &:not(.empty):active {
+    transform: scale(0.95);
+  }
+
+  &.today {
+    border: 2rpx solid $color-primary;
+  }
+
+  &.selected {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    box-shadow: 0 4rpx 12rpx rgba(46, 125, 91, 0.3);
+
+    .dateNum {
+      color: $color-text-white;
+      font-weight: $font-weight-semibold;
+    }
+
+    .badge {
+      background: $color-text-white;
+      color: $color-primary;
+    }
+  }
+
+  &.hasBooking {
+    .dateNum {
+      color: $color-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  &.disabled {
+    .dateNum {
+      color: $color-text-disabled;
+    }
+    pointer-events: none;
+  }
+}
+
+.dateNum {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  line-height: 1.2;
+  margin-bottom: 4rpx;
+}
+
+.badge {
+  min-width: 40rpx;
+  height: 28rpx;
+  padding: 0 8rpx;
+  background: $color-accent;
+  color: $color-text-white;
+  font-size: 18rpx;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-lg;
+  padding: $spacing-md 0 0;
+  border-top: 1rpx solid $color-divider;
+  margin-top: $spacing-md;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.legendDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-xs;
+
+  &.available {
+    background: $color-success;
+  }
+  &.booked {
+    background: $color-accent;
+  }
+  &.today {
+    border: 2rpx solid $color-primary;
+  }
+  &.selected {
+    background: $color-primary;
+  }
+}
+
+.selectedInfo {
+  margin: 0 $page-padding $spacing-md;
+  background: linear-gradient(135deg, $color-primary-bg 0%, rgba(46, 125, 91, 0.04) 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  border: 2rpx solid rgba(46, 125, 91, 0.2);
+}
+
+.selectedDate {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.selectedCount {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.bookingList {
+  padding: 0 $page-padding;
+}
+
+.bookingItem {
+  display: flex;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.itemImage {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $color-bg-hover;
+}
+
+.itemContent {
+  flex: 1;
+  margin-left: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.itemTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-xs;
+  gap: $spacing-sm;
+}
+
+.itemName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  flex: 1;
+}
+
+.itemMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  margin-bottom: $spacing-sm;
+}
+
+.metaLine {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.metaIcon {
+  margin-right: 6rpx;
+  font-size: $font-size-sm;
+}
+
+.itemFooter {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.avatar {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: $radius-round;
+  background: $color-primary-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+}

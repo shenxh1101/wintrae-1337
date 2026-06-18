@@ -1,0 +1,416 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.header {
+  margin: $spacing-md $page-padding;
+  padding: $spacing-lg $spacing-md;
+  background: linear-gradient(135deg, $color-info 0%, #4080FF 100%);
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8rpx 24rpx rgba(22, 93, 255, 0.25);
+}
+
+.headerLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin-bottom: 8rpx;
+}
+
+.headerDesc {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.headerIcon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: $radius-round;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  flex-shrink: 0;
+  margin-left: $spacing-md;
+}
+
+.counts {
+  display: flex;
+  gap: $spacing-lg;
+  margin-top: $spacing-sm;
+}
+
+.countItem {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.countValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.countLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.filters {
+  display: flex;
+  padding: 0 $page-padding;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  overflow-x: auto;
+  @include scroll-x-container;
+}
+
+.filterChip {
+  @include scroll-x-item(auto);
+  padding: 14rpx 28rpx;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all $transition-base;
+  position: relative;
+
+  &.active {
+    background: linear-gradient(135deg, $color-info 0%, #4080FF 100%);
+    color: $color-text-white;
+    font-weight: $font-weight-medium;
+    box-shadow: 0 4rpx 12rpx rgba(22, 93, 255, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.badgeDot {
+  position: absolute;
+  top: 8rpx;
+  right: 12rpx;
+  width: 16rpx;
+  height: 16rpx;
+  background: $color-error;
+  border-radius: $radius-round;
+}
+
+.list {
+  padding: 0 $page-padding;
+}
+
+.noticeCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  border-left: 8rpx solid $color-info;
+  position: relative;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &.priorityHigh {
+    border-left-color: $color-error;
+  }
+  &.priorityMedium {
+    border-left-color: $color-warning;
+  }
+
+  &:active {
+    transform: scale(0.995);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+  gap: $spacing-sm;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex: 1;
+  min-width: 0;
+}
+
+.priorityBadge {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: 20rpx;
+  font-weight: $font-weight-semibold;
+  flex-shrink: 0;
+
+  &.high {
+    background: rgba(255, 77, 79, 0.1);
+    color: $color-error;
+  }
+  &.medium {
+    background: rgba(250, 173, 20, 0.1);
+    color: $color-warning;
+  }
+  &.low {
+    background: rgba(156, 163, 175, 0.1);
+    color: $color-text-tertiary;
+  }
+}
+
+.title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  line-height: $line-height-tight;
+  flex: 1;
+  min-width: 0;
+  @include text-ellipsis;
+}
+
+.unreadDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  background: $color-error;
+  flex-shrink: 0;
+  margin-top: 8rpx;
+}
+
+.typeRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+  gap: $spacing-sm;
+}
+
+.typeTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.time {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: flex;
+  align-items: center;
+}
+
+.summary {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  @include text-ellipsis-multi(3);
+  margin-bottom: $spacing-md;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: $spacing-sm;
+  border-top: 1rpx solid $color-divider;
+}
+
+.related {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.relatedLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+}
+
+.relatedTool {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  background: $color-primary-bg;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  @include text-ellipsis;
+  max-width: 300rpx;
+}
+
+.readMore {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-sm;
+  color: $color-info;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.arrow {
+  margin-left: 4rpx;
+  font-size: $font-size-md;
+}
+
+.detailModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modalContent {
+  width: 100%;
+  max-height: 85vh;
+  background: $color-bg-card;
+  border-radius: $radius-xl $radius-xl 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $page-padding;
+  border-bottom: 1rpx solid $color-divider;
+  flex-shrink: 0;
+}
+
+.modalTitle {
+  flex: 1;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  text-align: center;
+  padding: 0 $spacing-lg;
+}
+
+.closeBtn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-round;
+  background: $color-bg-hover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-xl;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+
+  &:active {
+    background: $color-border;
+  }
+}
+
+.placeholder {
+  width: 56rpx;
+}
+
+.modalBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg $page-padding;
+}
+
+.detailTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: $line-height-tight;
+  margin-bottom: $spacing-md;
+}
+
+.detailMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+  flex-wrap: wrap;
+}
+
+.contentText {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.modalFooter {
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  border-top: 1rpx solid $color-divider;
+  display: flex;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.footerBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &.btnSecondary {
+    background: $color-bg-hover;
+    color: $color-text-secondary;
+  }
+
+  &.btnPrimary {
+    background: linear-gradient(135deg, $color-info 0%, #4080FF 100%);
+    color: $color-text-white;
+    box-shadow: 0 6rpx 20rpx rgba(22, 93, 255, 0.3);
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

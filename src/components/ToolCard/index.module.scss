@@ -1,0 +1,111 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  display: flex;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.99);
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  }
+}
+
+.imageWrap {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $color-bg-hover;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  flex: 1;
+  margin-left: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+  gap: $spacing-sm;
+}
+
+.name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  flex: 1;
+}
+
+.desc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-tight;
+  @include text-ellipsis-multi(2);
+  margin-bottom: $spacing-sm;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm $spacing-md;
+  margin-bottom: $spacing-sm;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.metaIcon {
+  margin-right: 6rpx;
+  font-size: $font-size-sm;
+}
+
+.footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deposit {
+  display: flex;
+  align-items: baseline;
+}
+
+.depositLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-right: 4rpx;
+}
+
+.depositValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-deposit;
+}
+
+.depositUnit {
+  font-size: $font-size-xs;
+  color: $color-deposit;
+  margin-left: 2rpx;
+}

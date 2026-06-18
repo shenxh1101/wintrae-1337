@@ -1,0 +1,623 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+.pageContainer {
+  padding: $spacing-md $page-padding;
+}
+
+.toolCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.toolImage {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $color-bg-hover;
+
+  image {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.toolInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.toolHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  margin-bottom: 8rpx;
+}
+
+.toolName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: $line-height-tight;
+  flex: 1;
+}
+
+.toolMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: 8rpx;
+}
+
+.metaTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background: $color-bg-hover;
+  padding: 6rpx 14rpx;
+  border-radius: $radius-xs;
+}
+
+.toolDeposit {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.depositLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.depositValue {
+  font-size: 36rpx;
+  font-weight: $font-weight-bold;
+  color: $color-deposit;
+}
+
+.section {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.sectionIcon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: $radius-sm;
+  background: $color-primary-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  flex: 1;
+}
+
+.sectionHint {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.datePickerRow {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.dateField {
+  flex: 1;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  transition: all $transition-base;
+
+  &:active {
+    background: darken(#F2F3F5, 4%);
+  }
+}
+
+.dateLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.dateValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.dateArrow {
+  align-self: center;
+  font-size: $font-size-lg;
+  color: $color-primary;
+  font-weight: $font-weight-bold;
+}
+
+.daysBadge {
+  align-self: flex-end;
+  background: $color-primary-bg;
+  color: $color-primary;
+  padding: 8rpx 20rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.calendarWrap {
+  margin-top: $spacing-sm;
+  border: 1rpx solid $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-sm;
+  background: $color-bg-hover;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.calendarNav {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-round;
+  background: $color-bg-card;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+
+  &:active {
+    background: darken(#FFFFFF, 4%);
+  }
+}
+
+.calendarTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.weekdayRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: $spacing-sm;
+}
+
+.weekdayCell {
+  text-align: center;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  padding: 12rpx 0;
+  font-weight: $font-weight-medium;
+
+  &.weekend {
+    color: $color-error;
+  }
+}
+
+.dateGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4rpx;
+}
+
+.dateCell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  border-radius: $radius-sm;
+  position: relative;
+  transition: all $transition-base;
+
+  &.empty {
+    pointer-events: none;
+  }
+
+  &.disabled {
+    color: $color-text-disabled;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  &.past {
+    color: $color-text-disabled;
+    pointer-events: none;
+  }
+
+  &.today {
+    border: 2rpx solid $color-primary;
+  }
+
+  &.inRange {
+    background: rgba(46, 125, 91, 0.15);
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: $radius-sm 0 0 $radius-sm;
+    }
+
+    &:last-child {
+      border-radius: 0 $radius-sm $radius-sm 0;
+    }
+  }
+
+  &.startDate,
+  &.endDate {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-sm;
+  }
+
+  &.endDate.sameDay {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    border-radius: $radius-sm;
+  }
+
+  &:active:not(.disabled):not(.past) {
+    transform: scale(0.92);
+  }
+}
+
+.cellDot {
+  position: absolute;
+  bottom: 6rpx;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: $color-warning;
+}
+
+.bookingList {
+  margin-top: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.bookingItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 16rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+}
+
+.bookingBar {
+  width: 6rpx;
+  height: 60rpx;
+  border-radius: 3rpx;
+  background: $color-warning;
+  flex-shrink: 0;
+}
+
+.bookingInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.bookingName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.bookingDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.inputLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.textareaWrap {
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 200rpx;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  line-height: $line-height-normal;
+}
+
+.textareaHint {
+  margin-top: 8rpx;
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.purposeTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.purposeTag {
+  padding: 14rpx 28rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border: 2rpx solid transparent;
+  transition: all $transition-base;
+
+  &.active {
+    background: $color-primary-bg;
+    color: $color-primary;
+    border-color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summaryLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.summaryValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  max-width: 400rpx;
+}
+
+.divider {
+  height: 1rpx;
+  background: $color-divider;
+}
+
+.totalRow {
+  padding-top: $spacing-sm;
+}
+
+.totalValue {
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-deposit;
+
+  text {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: rgba(22, 93, 255, 0.04);
+  border-radius: $radius-sm;
+}
+
+.checkbox {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+  transition: all $transition-base;
+
+  &.checked {
+    background: $color-primary;
+    border-color: $color-primary;
+
+    .checkMark {
+      opacity: 1;
+    }
+  }
+}
+
+.checkMark {
+  color: $color-text-white;
+  font-size: 24rpx;
+  opacity: 0;
+  transition: opacity $transition-base;
+}
+
+.agreementText {
+  flex: 1;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: 1.8;
+}
+
+.linkText {
+  color: $color-info;
+  font-weight: $font-weight-medium;
+}
+
+.bottomBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  z-index: 100;
+}
+
+.priceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.priceLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.priceValue {
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-deposit;
+  line-height: 1;
+
+  text {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.btnGroup {
+  flex: 1;
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.btn {
+  @include button-reset;
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+
+  &.btnSecondary {
+    background: $color-bg-hover;
+    color: $color-text-secondary;
+  }
+
+  &.btnPrimary {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    box-shadow: 0 6rpx 20rpx rgba(46, 125, 91, 0.3);
+  }
+
+  &.btnDisabled {
+    background: $color-bg-hover;
+    color: $color-text-disabled;
+    box-shadow: none;
+  }
+
+  &:active:not(.btnDisabled) {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.bannerTip {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: rgba(250, 173, 20, 0.1);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+  border-left: 6rpx solid $color-warning;
+}
+
+.bannerIcon {
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.bannerText {
+  flex: 1;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: 1.7;
+}
+
+.bannerTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: darken(#FAAD14, 10%);
+  margin-bottom: 4rpx;
+}

@@ -1,0 +1,432 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.modeBanner {
+  margin: $spacing-md $page-padding;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(135deg, $color-warning 0%, #FFC069 100%);
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4rpx 16rpx rgba(250, 173, 20, 0.2);
+}
+
+.bannerLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.bannerTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+  margin-bottom: 4rpx;
+}
+
+.bannerDesc {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.bannerAction {
+  padding: 12rpx 24rpx;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.35);
+  }
+}
+
+.tabs {
+  display: flex;
+  margin: 0 $page-padding $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  padding: 8rpx;
+  box-shadow: $shadow-card;
+}
+
+.tab {
+  flex: 1;
+  padding: 20rpx 0;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border-radius: $radius-button;
+  transition: all $transition-base;
+
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    font-weight: $font-weight-semibold;
+    box-shadow: 0 4rpx 12rpx rgba(46, 125, 91, 0.25);
+  }
+}
+
+.list {
+  padding: 0 $page-padding;
+}
+
+.checkCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  padding-bottom: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+  margin-bottom: $spacing-md;
+}
+
+.imageWrap {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $color-bg-hover;
+}
+
+.topInfo {
+  flex: 1;
+  margin-left: $spacing-md;
+  min-width: 0;
+}
+
+.toolRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+}
+
+.toolName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  flex: 1;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.avatar {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: $radius-round;
+  background: $color-primary-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16rpx;
+  margin-right: 6rpx;
+}
+
+.section {
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  display: flex;
+  align-items: center;
+}
+
+.sectionIcon {
+  margin-right: 8rpx;
+  font-size: $font-size-md;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.accessoryList {
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.accItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.accLeft {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.checkbox {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-xs;
+  border: 3rpx solid $color-border;
+  margin-right: $spacing-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all $transition-fast;
+
+  &.checked {
+    background: $color-primary;
+    border-color: $color-primary;
+  }
+}
+
+.checkMark {
+  color: $color-text-white;
+  font-size: 24rpx;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+.accName {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.reqBadge {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: 20rpx;
+  font-weight: $font-weight-medium;
+
+  &.required {
+    background: rgba(255, 77, 79, 0.1);
+    color: $color-error;
+  }
+  &.optional {
+    background: rgba(156, 163, 175, 0.1);
+    color: $color-text-tertiary;
+  }
+}
+
+.photoSection {
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.photoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-sm;
+}
+
+.photoItem {
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  overflow: hidden;
+  position: relative;
+  background: $color-bg-card;
+  border: 2rpx dashed $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: $color-text-tertiary;
+  font-size: $font-size-xs;
+
+  &.filled {
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  &:active {
+    opacity: 0.85;
+  }
+}
+
+.photoIcon {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.conditionBtns {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.condBtn {
+  flex: 1;
+  padding: 20rpx 0;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  text-align: center;
+  border: 3rpx solid $color-border;
+  color: $color-text-secondary;
+  background: $color-bg-card;
+  font-weight: $font-weight-medium;
+  transition: all $transition-fast;
+
+  &.good {
+    &.active {
+      background: rgba(82, 196, 26, 0.1);
+      border-color: $color-success;
+      color: $color-success;
+    }
+  }
+  &.damaged {
+    &.active {
+      background: rgba(250, 173, 20, 0.1);
+      border-color: $color-warning;
+      color: $color-warning;
+    }
+  }
+  &.lost {
+    &.active {
+      background: rgba(255, 77, 79, 0.1);
+      border-color: $color-error;
+      color: $color-error;
+    }
+  }
+}
+
+.inputWrap {
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.input {
+  width: 100%;
+  min-height: 120rpx;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+  box-sizing: border-box;
+  line-height: $line-height-normal;
+}
+
+.inputTip {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: $spacing-xs;
+}
+
+.actionBar {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+}
+
+.actionBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &.btnConfirm {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    box-shadow: 0 6rpx 20rpx rgba(46, 125, 91, 0.3);
+  }
+
+  &.btnLend {
+    background: linear-gradient(135deg, $color-info 0%, #4080FF 100%);
+    color: $color-text-white;
+    box-shadow: 0 6rpx 20rpx rgba(22, 93, 255, 0.3);
+  }
+
+  &.btnGhost {
+    background: $color-bg-card;
+    color: $color-text-secondary;
+    border: 2rpx solid $color-border;
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.noticeTip {
+  margin: $spacing-md $page-padding;
+  padding: $spacing-md;
+  background: rgba(250, 173, 20, 0.08);
+  border-radius: $radius-md;
+  border-left: 6rpx solid $color-warning;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
+.tipTitle {
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+  margin-bottom: 8rpx;
+  font-size: $font-size-sm;
+}

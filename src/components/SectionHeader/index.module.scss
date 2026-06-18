@@ -1,0 +1,57 @@
+@use '@/styles/variables.scss' as *;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.bar {
+  width: 8rpx;
+  height: 32rpx;
+  border-radius: $radius-xs;
+  background: linear-gradient(180deg, $color-primary 0%, $color-primary-light 100%);
+  margin-right: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-left: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: $spacing-md;
+}
+
+.more {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  display: flex;
+  align-items: center;
+}
+
+.arrow {
+  margin-left: 4rpx;
+  font-size: $font-size-md;
+}

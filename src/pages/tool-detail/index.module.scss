@@ -1,0 +1,485 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+.heroImage {
+  width: 100%;
+  height: 480rpx;
+  position: relative;
+  background: #e5e7eb;
+
+  image {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.heroOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 32rpx $page-padding;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+}
+
+.heroTitle {
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  line-height: $line-height-tight;
+  margin-bottom: 12rpx;
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.heroMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: $font-size-xs;
+}
+
+.pageBody {
+  padding: 0 $page-padding;
+  margin-top: -32rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.statusBar {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.statusLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.statusIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-round;
+  background: $color-primary-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+
+.statusText {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.statusLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.statusValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.infoCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.cardIcon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: $radius-sm;
+  background: $color-primary-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.cardTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  flex: 1;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.infoLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+
+  &.deposit {
+    color: $color-deposit;
+    font-size: 36rpx;
+  }
+}
+
+.descText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+}
+
+.ruleList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.ruleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+}
+
+.ruleIndex {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-round;
+  background: $color-primary;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ruleText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  flex: 1;
+}
+
+.accList {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.accItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+}
+
+.accLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.accIcon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-sm;
+  background: $color-bg-card;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.accName {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.accBadge {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+
+  &.required {
+    background: rgba(46, 125, 91, 0.1);
+    color: $color-primary;
+  }
+
+  &.optional {
+    background: rgba(156, 163, 175, 0.15);
+    color: $color-text-tertiary;
+  }
+}
+
+.scheduleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.scheduleHint {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 8rpx;
+}
+
+.dateChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.dateChip {
+  padding: 14rpx 24rpx;
+  background: $color-primary-bg;
+  border-radius: $radius-button;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120rpx;
+  gap: 4rpx;
+  border: 2rpx solid transparent;
+  transition: all $transition-base;
+
+  &.unavailable {
+    background: rgba(255, 77, 79, 0.06);
+    border-color: rgba(255, 77, 79, 0.2);
+  }
+
+  &.selected {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 4rpx rgba(46, 125, 91, 0.1);
+  }
+}
+
+.dateChipDate {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+
+  .unavailable & {
+    color: $color-error;
+  }
+}
+
+.dateChipLabel {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+
+  .unavailable & {
+    color: rgba(255, 77, 79, 0.6);
+  }
+}
+
+.scheduleList {
+  margin-top: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.scheduleItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+  gap: $spacing-sm;
+}
+
+.scheduleAvatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-round;
+  background: linear-gradient(135deg, $color-primary-light, $color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  flex-shrink: 0;
+}
+
+.scheduleInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.scheduleUser {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.scheduleDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.emptySchedule {
+  padding: $spacing-lg;
+  text-align: center;
+  color: $color-text-tertiary;
+  font-size: $font-size-sm;
+}
+
+.bottomBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  z-index: 100;
+}
+
+.priceWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.priceLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.priceValue {
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-deposit;
+  line-height: 1;
+
+  text {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.btnGroup {
+  flex: 1;
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.btn {
+  @include button-reset;
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+
+  &.btnFav {
+    flex: 0 0 88rpx;
+    background: $color-bg-hover;
+    color: $color-text-secondary;
+    font-size: 36rpx;
+  }
+
+  &.btnSecondary {
+    background: $color-primary-bg;
+    color: $color-primary;
+  }
+
+  &.btnPrimary {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    box-shadow: 0 6rpx 20rpx rgba(46, 125, 91, 0.3);
+  }
+
+  &.btnDisabled {
+    background: $color-bg-hover;
+    color: $color-text-disabled;
+    box-shadow: none;
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.thumbRow {
+  display: flex;
+  gap: $spacing-sm;
+  overflow-x: auto;
+  padding-bottom: $spacing-sm;
+  @include scroll-x-container;
+}
+
+.thumbItem {
+  @include scroll-x-item(auto);
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 4rpx solid transparent;
+
+  &.active {
+    border-color: $color-primary;
+  }
+
+  image {
+    width: 100%;
+    height: 100%;
+  }
+}
