@@ -123,6 +123,31 @@ const RecordsPage: React.FC = () => {
           </View>
         )}
 
+        {booking.conditionPhotos && booking.conditionPhotos.length > 0 && (
+          <View className={styles.photoSection}>
+            <Text className={styles.photoSectionTitle}>
+              <Text className={styles.photoSectionIcon}>📷</Text>
+              外观照片
+            </Text>
+            <View className={styles.photoGrid}>
+              {booking.conditionPhotos.map((src, idx) => (
+                <Image
+                  key={idx}
+                  className={styles.photoThumb}
+                  src={src}
+                  mode="aspectFill"
+                  onClick={() => {
+                    Taro.previewImage({
+                      current: src,
+                      urls: booking.conditionPhotos!,
+                    });
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
         <View className={styles.purposeBox}>
           <Text className={styles.purposeLabel}>📝 借用用途</Text>
           <Text className={styles.purposeText}>{booking.purpose}</Text>

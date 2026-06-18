@@ -3,9 +3,10 @@
 // ============================================
 
 import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, Input } from '@tarojs/components';
+import { View, Text, ScrollView, Input, Picker } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
+import dayjs from 'dayjs';
 import { useApp } from '@/store/AppContext';
 import { TOOL_CATEGORIES, TOOL_LOCATIONS } from '@/data/tools';
 import ToolCard from '@/components/ToolCard';
@@ -16,10 +17,23 @@ import styles from './index.module.scss';
 
 const TIME_SLOTS: TimeSlotType[] = ['morning', 'afternoon', 'evening', 'allday'];
 
-const isTimeSlotConflict = (a: TimeSlotType, b: TimeSlotType): boolean => {
-  if (a === 'allday' || b === 'allday') return true;
-  return a === b;
+const isTimeSlotConflict = (filterSlot: TimeSlotType, bookingSlot?: TimeSlotType): boolean => {
+  if (!bookingSlot) return true;
+  if (filterSlot === 'allday' || bookingSlot === 'allday') return true;
+  return filterSlot === bookingSlot;
 };
+
+function getDateRange(start: string, end: string): string[] {
+  const dates: string[] = [];
+  const s = dayjs(start);
+  const e = dayjs(end);
+  let cur = s;
+  while (cur.isBefore(e) || cur.isSame(e, 'day')) {
+    dates.push(cur.format('YYYY-MM-DD'));
+    cur = cur.add(1, 'day');
+  }
+  return dates;
+}
 
 const ToolsPage: React.FC = () => {
   const { tools, bookings, currentUser, isAdmin, toggleRole, notices } = useApp();
@@ -63,19 +77,26 @@ const ToolsPage: React.FC = () => {
         const rangeStart = dateStart || dateEnd;
         const rangeEnd = dateEnd || dateStart;
         const available = tool.availableDates || [];
-        const hasAvailableDate = available.some(d => d >= rangeStart && d <= rangeEnd);
-        if (!hasAvailableDate) return false;
-        if (activeTimeSlot) {
-          const hasConflict = bookings.some(booking => {
-            if (booking.toolId !== tool.id) return false;
-            if (booking.status === 'cancelled' || booking.status === 'returned') return false;
-            if (booking.endDate < rangeStart || booking.startDate > rangeEnd) return false;
-            const bSlot = booking.timeSlot;
-            if (!bSlot) return false;
-            return isTimeSlotConflict(bSlot, activeTimeSlot);
-          });
-          if (hasConflict) return false;
-        }
+        const requiredDates = getDateRange(rangeStart, rangeEnd);
+        const allAvailable = requiredDates.every(d => available.includes(d));
+        if (!allAvailable) return false;
+        const hasConflict = bookings.some(booking => {
+          if (booking.toolId !== tool.id) return false;
+          if (booking.status === 'cancelled' || booking.status === 'returned') return false;
+          if (booking.endDate < rangeStart || booking.startDate > rangeEnd) return false;
+          if (!activeTimeSlot) {
+            return true;
+          }
+          return isTimeSlotConflict(activeTimeSlot, booking.timeSlot);
+        });
+        if (hasConflict) return false;
+      } else if (activeTimeSlot) {
+        const hasConflict = bookings.some(booking => {
+          if (booking.toolId !== tool.id) return false;
+          if (booking.status === 'cancelled' || booking.status === 'returned') return false;
+          return isTimeSlotConflict(activeTimeSlot, booking.timeSlot);
+        });
+        if (hasConflict) return false;
       }
       return true;
     });
@@ -91,16 +112,20 @@ const ToolsPage: React.FC = () => {
     });
   };
 
-  const handleDateStartClick = () => {
-    (Taro as any).showPicker({ mode: 'date' }).then((res: any) => {
-      setDateStart(res.value as string);
-    }).catch(() => {});
+  const handleDateStartChange = (e: any) => {
+    const value = e.detail.value;
+    setDateStart(value);
+    if (dateEnd && value > dateEnd) {
+      setDateEnd(value);
+    }
   };
 
-  const handleDateEndClick = () => {
-    (Taro as any).showPicker({ mode: 'date' }).then((res: any) => {
-      setDateEnd(res.value as string);
-    }).catch(() => {});
+  const handleDateEndChange = (e: any) => {
+    const value = e.detail.value;
+    setDateEnd(value);
+    if (dateStart && value < dateStart) {
+      setDateStart(value);
+    }
   };
 
   const handleClearDateFilter = () => {
@@ -239,25 +264,39 @@ const ToolsPage: React.FC = () => {
           </View>
 
           <View className={styles.dateRow}>
-            <View
-              className={classnames(styles.dateInput, dateStart && styles.dateActive)}
-              onClick={handleDateStartClick}
+            <Picker
+              mode="date"
+              value={dateStart}
+              start="2020-01-01"
+              end="2035-12-31"
+              onChange={handleDateStartChange}
             >
-              <Text className={styles.dateIcon}>📅</Text>
-              <Text className={classnames(!dateStart && styles.datePlaceholder)}>
-                {dateStart || '开始日期'}
-              </Text>
-            </View>
+              <View
+                className={classnames(styles.dateInput, dateStart && styles.dateActive)}
+              >
+                <Text className={styles.dateIcon}>📅</Text>
+                <Text className={classnames(!dateStart && styles.datePlaceholder)}>
+                  {dateStart || '开始日期'}
+                </Text>
+              </View>
+            </Picker>
             <Text className={styles.dateSeparator}>~</Text>
-            <View
-              className={classnames(styles.dateInput, dateEnd && styles.dateActive)}
-              onClick={handleDateEndClick}
+            <Picker
+              mode="date"
+              value={dateEnd}
+              start={dateStart || '2020-01-01'}
+              end="2035-12-31"
+              onChange={handleDateEndChange}
             >
-              <Text className={styles.dateIcon}>📅</Text>
-              <Text className={classnames(!dateEnd && styles.datePlaceholder)}>
-                {dateEnd || '结束日期'}
-              </Text>
-            </View>
+              <View
+                className={classnames(styles.dateInput, dateEnd && styles.dateActive)}
+              >
+                <Text className={styles.dateIcon}>📅</Text>
+                <Text className={classnames(!dateEnd && styles.datePlaceholder)}>
+                  {dateEnd || '结束日期'}
+                </Text>
+              </View>
+            </Picker>
           </View>
 
           <View className={styles.timeSlotRow}>
