@@ -21,6 +21,7 @@ import {
   formatDate,
   formatDisplayDate,
 } from '@/utils/date';
+import { TIME_SLOT_LABELS } from '@/types';
 import styles from './index.module.scss';
 
 const CalendarPage: React.FC = () => {
@@ -242,6 +243,12 @@ const CalendarPage: React.FC = () => {
                       <Text className={styles.metaIcon}>📆</Text>
                       <Text>{b.startDate} 至 {b.endDate}</Text>
                     </View>
+                    {b.timeSlot && (
+                      <View className={styles.metaLine}>
+                        <Text className={styles.metaIcon}>🕐</Text>
+                        <Text>{TIME_SLOT_LABELS[b.timeSlot].icon} {TIME_SLOT_LABELS[b.timeSlot].label} {TIME_SLOT_LABELS[b.timeSlot].time}</Text>
+                      </View>
+                    )}
                     <View className={styles.metaLine}>
                       <Text className={styles.metaIcon}>💰</Text>
                       <Text>押金 {b.deposit}元</Text>

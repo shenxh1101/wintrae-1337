@@ -2,11 +2,37 @@
 // 全局状态管理 - React Context
 // ============================================
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import Taro from '@tarojs/taro';
 import { Tool, Booking, Notice, User, BookingStatus } from '@/types';
 import { TOOLS } from '@/data/tools';
 import { BOOKINGS } from '@/data/bookings';
 import { NOTICES } from '@/data/notices';
+
+const STORAGE_KEYS = {
+  tools: 'community_tools',
+  bookings: 'community_bookings',
+  notices: 'community_notices',
+  user: 'community_user',
+};
+
+function loadStorage<T>(key: string, fallback: T): T {
+  try {
+    const raw = Taro.getStorageSync(key);
+    if (raw) return JSON.parse(raw as string) as T;
+  } catch (e) {
+    console.warn('[AppContext] 读取localStorage失败:', key, e);
+  }
+  return fallback;
+}
+
+function saveStorage(key: string, data: unknown) {
+  try {
+    Taro.setStorageSync(key, JSON.stringify(data));
+  } catch (e) {
+    console.warn('[AppContext] 写入localStorage失败:', key, e);
+  }
+}
 
 interface AppState {
   tools: Tool[];
@@ -35,12 +61,17 @@ const defaultUser: User = {
 };
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [tools, setTools] = useState<Tool[]>(TOOLS);
-  const [bookings, setBookings] = useState<Booking[]>(BOOKINGS);
-  const [notices, setNotices] = useState<Notice[]>(NOTICES);
-  const [currentUser, setCurrentUser] = useState<User>(defaultUser);
+  const [tools, setTools] = useState<Tool[]>(() => loadStorage(STORAGE_KEYS.tools, TOOLS));
+  const [bookings, setBookings] = useState<Booking[]>(() => loadStorage(STORAGE_KEYS.bookings, BOOKINGS));
+  const [notices, setNotices] = useState<Notice[]>(() => loadStorage(STORAGE_KEYS.notices, NOTICES));
+  const [currentUser, setCurrentUser] = useState<User>(() => loadStorage(STORAGE_KEYS.user, defaultUser));
 
   const isAdmin = currentUser.role === 'admin';
+
+  useEffect(() => { saveStorage(STORAGE_KEYS.tools, tools); }, [tools]);
+  useEffect(() => { saveStorage(STORAGE_KEYS.bookings, bookings); }, [bookings]);
+  useEffect(() => { saveStorage(STORAGE_KEYS.notices, notices); }, [notices]);
+  useEffect(() => { saveStorage(STORAGE_KEYS.user, currentUser); }, [currentUser]);
 
   const addBooking = useCallback((bookingData: Omit<Booking, 'id' | 'createdAt'>) => {
     const newBooking: Booking = {

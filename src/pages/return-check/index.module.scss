@@ -305,6 +305,30 @@
   }
 }
 
+.photoDelete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 0 $radius-md 0 $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+
+  &:active {
+    background: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.photoDeleteIcon {
+  color: #fff;
+  font-size: 28rpx;
+  line-height: 1;
+}
+
 .photoIcon {
   font-size: 48rpx;
   margin-bottom: 8rpx;

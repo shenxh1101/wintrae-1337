@@ -10,7 +10,7 @@ import { useApp } from '@/store/AppContext';
 import { STATUS_LABELS, FILTER_TABS } from '@/data/bookings';
 import StatusTag from '@/components/StatusTag';
 import EmptyState from '@/components/EmptyState';
-import { Booking, BookingStatus } from '@/types';
+import { Booking, TIME_SLOT_LABELS } from '@/types';
 import styles from './index.module.scss';
 
 const CONDITION_MAP: Record<string, { label: string; cls: string }> = {
@@ -116,6 +116,12 @@ const RecordsPage: React.FC = () => {
             <View className={styles.dateValue}>{booking.endDate}</View>
           </View>
         </View>
+
+        {booking.timeSlot && (
+          <View className={styles.timeSlotBadge}>
+            <Text>{TIME_SLOT_LABELS[booking.timeSlot].icon} {TIME_SLOT_LABELS[booking.timeSlot].label} {TIME_SLOT_LABELS[booking.timeSlot].time}</Text>
+          </View>
+        )}
 
         <View className={styles.purposeBox}>
           <Text className={styles.purposeLabel}>📝 借用用途</Text>

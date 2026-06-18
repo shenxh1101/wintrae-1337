@@ -183,6 +183,18 @@
   margin: 0 $spacing-sm;
 }
 
+.timeSlotBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  background: rgba(22, 93, 255, 0.08);
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  color: $color-info;
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
 .purposeBox {
   padding: $spacing-sm $spacing-md;
   background: $color-bg-hover;

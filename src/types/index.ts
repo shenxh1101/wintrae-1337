@@ -37,6 +37,16 @@ export interface Accessory {
 // 预约状态
 export type BookingStatus = 'pending' | 'approved' | 'borrowed' | 'returned' | 'cancelled' | 'overdue';
 
+// 借用时段
+export type TimeSlotType = 'morning' | 'afternoon' | 'evening' | 'allday';
+
+export const TIME_SLOT_LABELS: Record<TimeSlotType, { label: string; icon: string; time: string }> = {
+  morning: { label: '上午', icon: '🌅', time: '08:00-12:00' },
+  afternoon: { label: '下午', icon: '☀️', time: '12:00-18:00' },
+  evening: { label: '晚上', icon: '🌙', time: '18:00-22:00' },
+  allday: { label: '全天', icon: '📅', time: '08:00-22:00' },
+};
+
 // 预约接口
 export interface Booking {
   id: string;
@@ -49,6 +59,7 @@ export interface Booking {
   userPhone: string;
   startDate: string;
   endDate: string;
+  timeSlot?: TimeSlotType;
   purpose: string;
   status: BookingStatus;
   deposit: number;
@@ -102,5 +113,7 @@ export interface FilterOptions {
   category?: ToolCategory | 'all';
   location?: string;
   date?: string;
+  dateEnd?: string;
+  timeSlot?: TimeSlotType | 'all';
   keyword?: string;
 }

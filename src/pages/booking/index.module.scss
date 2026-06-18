@@ -146,7 +146,7 @@
   transition: all $transition-base;
 
   &:active {
-    background: darken(#F2F3F5, 4%);
+    background: #e5e6e8;
   }
 }
 
@@ -209,7 +209,7 @@
   color: $color-text-secondary;
 
   &:active {
-    background: darken(#FFFFFF, 4%);
+    background: #f5f5f5;
   }
 }
 
@@ -618,6 +618,34 @@
 .bannerTitle {
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
-  color: darken(#FAAD14, 10%);
+  color: #d4910e;
   margin-bottom: 4rpx;
+}
+
+.timeSlotRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+}
+
+.timeSlotChip {
+  padding: 14rpx 28rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border: 2rpx solid transparent;
+  transition: all $transition-base;
+
+  &.timeSlotActive {
+    background: $color-primary-bg;
+    color: $color-primary;
+    border-color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }

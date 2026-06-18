@@ -97,11 +97,32 @@ const ReturnCheckPage: React.FC = () => {
       Taro.showToast({ title: '最多上传6张', icon: 'none' });
       return;
     }
-    const mockId = Math.floor(Math.random() * 50) + 1;
-    const newPhoto = `https://picsum.photos/id/${mockId}/400/400`;
-    updateState(bookingId, { photos: [...state.photos, newPhoto] });
-    console.log('[ReturnCheck] 模拟拍照成功:', newPhoto);
-    Taro.showToast({ title: '拍照成功', icon: 'success' });
+    Taro.chooseImage({
+      count: 6 - state.photos.length,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const newPhotos = res.tempFilePaths;
+        updateState(bookingId, { photos: [...state.photos, ...newPhotos] });
+        Taro.showToast({ title: `已选择${newPhotos.length}张照片`, icon: 'success' });
+      },
+    });
+  };
+
+  const handlePhotoPreview = (photos: string[], index: number) => {
+    Taro.previewImage({
+      current: photos[index],
+      urls: photos,
+    });
+  };
+
+  const handlePhotoDelete = (bookingId: string, photoIndex: number) => {
+    const tool = TOOLS.find(
+      t => t.id === bookings.find(b => b.id === bookingId)?.toolId
+    );
+    const state = getOrInitState(bookingId, tool?.accessories.length || 0);
+    const newPhotos = state.photos.filter((_, i) => i !== photoIndex);
+    updateState(bookingId, { photos: newPhotos });
   };
 
   const handleConfirmLend = (booking: Booking) => {
@@ -283,7 +304,14 @@ const ReturnCheckPage: React.FC = () => {
                     src={photo}
                     mode="aspectFill"
                     style={{ width: '100%', height: '100%' }}
+                    onClick={() => handlePhotoPreview(state.photos, idx)}
                   />
+                  <View
+                    className={styles.photoDelete}
+                    onClick={() => handlePhotoDelete(booking.id, idx)}
+                  >
+                    <Text className={styles.photoDeleteIcon}>×</Text>
+                  </View>
                 </View>
               ))}
               {state.photos.length < 6 && (

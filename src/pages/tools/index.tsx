@@ -11,15 +11,26 @@ import { TOOL_CATEGORIES, TOOL_LOCATIONS } from '@/data/tools';
 import ToolCard from '@/components/ToolCard';
 import EmptyState from '@/components/EmptyState';
 import SectionHeader from '@/components/SectionHeader';
-import { ToolCategory } from '@/types';
+import { TimeSlotType, TIME_SLOT_LABELS } from '@/types';
 import styles from './index.module.scss';
 
+const TIME_SLOTS: TimeSlotType[] = ['morning', 'afternoon', 'evening', 'allday'];
+
+const isTimeSlotConflict = (a: TimeSlotType, b: TimeSlotType): boolean => {
+  if (a === 'allday' || b === 'allday') return true;
+  return a === b;
+};
+
 const ToolsPage: React.FC = () => {
-  const { tools, currentUser, isAdmin, toggleRole, notices } = useApp();
+  const { tools, bookings, currentUser, isAdmin, toggleRole, notices } = useApp();
   const [searchKeyword, setSearchKeyword] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [activeLocation, setActiveLocation] = useState<string>('全部位置');
-  const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [dateStart, setDateStart] = useState('');
+  const [dateEnd, setDateEnd] = useState('');
+  const [activeTimeSlot, setActiveTimeSlot] = useState<TimeSlotType | ''>('');
+
+  const hasDateFilter = !!(dateStart || dateEnd || activeTimeSlot);
 
   const availableCount = useMemo(
     () => tools.filter(t => t.status === 'available').length,
@@ -40,15 +51,35 @@ const ToolsPage: React.FC = () => {
       }
       if (searchKeyword.trim()) {
         const kw = searchKeyword.trim().toLowerCase();
-        return (
-          tool.name.toLowerCase().includes(kw) ||
-          tool.description.toLowerCase().includes(kw) ||
-          tool.categoryName.includes(kw)
-        );
+        if (
+          !tool.name.toLowerCase().includes(kw) &&
+          !tool.description.toLowerCase().includes(kw) &&
+          !tool.categoryName.includes(kw)
+        ) {
+          return false;
+        }
+      }
+      if (dateStart || dateEnd) {
+        const rangeStart = dateStart || dateEnd;
+        const rangeEnd = dateEnd || dateStart;
+        const available = tool.availableDates || [];
+        const hasAvailableDate = available.some(d => d >= rangeStart && d <= rangeEnd);
+        if (!hasAvailableDate) return false;
+        if (activeTimeSlot) {
+          const hasConflict = bookings.some(booking => {
+            if (booking.toolId !== tool.id) return false;
+            if (booking.status === 'cancelled' || booking.status === 'returned') return false;
+            if (booking.endDate < rangeStart || booking.startDate > rangeEnd) return false;
+            const bSlot = booking.timeSlot;
+            if (!bSlot) return false;
+            return isTimeSlotConflict(bSlot, activeTimeSlot);
+          });
+          if (hasConflict) return false;
+        }
       }
       return true;
     });
-  }, [tools, activeCategory, activeLocation, searchKeyword]);
+  }, [tools, bookings, activeCategory, activeLocation, searchKeyword, dateStart, dateEnd, activeTimeSlot]);
 
   const handleLocationClick = () => {
     Taro.showActionSheet({
@@ -58,6 +89,24 @@ const ToolsPage: React.FC = () => {
         console.log('[ToolsPage] 选择位置:', TOOL_LOCATIONS[res.tapIndex]);
       },
     });
+  };
+
+  const handleDateStartClick = () => {
+    (Taro as any).showPicker({ mode: 'date' }).then((res: any) => {
+      setDateStart(res.value as string);
+    }).catch(() => {});
+  };
+
+  const handleDateEndClick = () => {
+    (Taro as any).showPicker({ mode: 'date' }).then((res: any) => {
+      setDateEnd(res.value as string);
+    }).catch(() => {});
+  };
+
+  const handleClearDateFilter = () => {
+    setDateStart('');
+    setDateEnd('');
+    setActiveTimeSlot('');
   };
 
   const handleRoleToggle = () => {
@@ -188,6 +237,54 @@ const ToolsPage: React.FC = () => {
             <Text>{activeLocation}</Text>
             <Text className={styles.locationArrow}>▼</Text>
           </View>
+
+          <View className={styles.dateRow}>
+            <View
+              className={classnames(styles.dateInput, dateStart && styles.dateActive)}
+              onClick={handleDateStartClick}
+            >
+              <Text className={styles.dateIcon}>📅</Text>
+              <Text className={classnames(!dateStart && styles.datePlaceholder)}>
+                {dateStart || '开始日期'}
+              </Text>
+            </View>
+            <Text className={styles.dateSeparator}>~</Text>
+            <View
+              className={classnames(styles.dateInput, dateEnd && styles.dateActive)}
+              onClick={handleDateEndClick}
+            >
+              <Text className={styles.dateIcon}>📅</Text>
+              <Text className={classnames(!dateEnd && styles.datePlaceholder)}>
+                {dateEnd || '结束日期'}
+              </Text>
+            </View>
+          </View>
+
+          <View className={styles.timeSlotRow}>
+            {TIME_SLOTS.map(slot => (
+              <View
+                key={slot}
+                className={classnames(
+                  styles.timeSlotChip,
+                  activeTimeSlot === slot && styles.active
+                )}
+                onClick={() => {
+                  setActiveTimeSlot(prev => (prev === slot ? '' : slot));
+                }}
+              >
+                <Text>{TIME_SLOT_LABELS[slot].icon}</Text>
+                <Text className={styles.timeSlotLabel}>{TIME_SLOT_LABELS[slot].label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {hasDateFilter && (
+            <View className={styles.clearDateRow}>
+              <Text className={styles.clearDateLink} onClick={handleClearDateFilter}>
+                清除日期筛选
+              </Text>
+            </View>
+          )}
         </View>
 
         <View className={styles.section}>

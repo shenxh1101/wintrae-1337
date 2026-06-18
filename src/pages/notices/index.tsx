@@ -3,7 +3,7 @@
 // ============================================
 
 import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, Button, Image } from '@tarojs/components';
+import { View, Text, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useApp } from '@/store/AppContext';

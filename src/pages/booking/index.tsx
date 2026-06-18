@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { useApp } from '@/store/AppContext';
 import { getToolById } from '@/data/tools';
 import StatusTag from '@/components/StatusTag';
-import { Booking } from '@/types';
+import { TIME_SLOT_LABELS, TimeSlotType, Booking } from '@/types';
 import styles from './index.module.scss';
 
 const PURPOSE_TAGS = ['家庭装修', '家具组装', '维修作业', '清洁打扫', '聚会活动', '学习办公', '其他'];
@@ -72,6 +72,7 @@ const BookingPage: React.FC = () => {
   const [activeTag, setActiveTag] = useState('');
   const [agree, setAgree] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [timeSlot, setTimeSlot] = useState<TimeSlotType>('allday');
 
   if (!tool) {
     return (
@@ -264,6 +265,7 @@ const BookingPage: React.FC = () => {
             userPhone: currentUser.phone,
             startDate,
             endDate,
+            timeSlot,
             purpose: purpose.trim(),
             status: 'pending',
             deposit: tool.deposit,
@@ -410,6 +412,21 @@ const BookingPage: React.FC = () => {
           </View>
 
           <View className={styles.daysBadge}>共 {totalDays} 天</View>
+
+          <View className={styles.timeSlotRow}>
+            {(Object.keys(TIME_SLOT_LABELS) as TimeSlotType[]).map(slot => (
+              <View
+                key={slot}
+                className={classnames(
+                  styles.timeSlotChip,
+                  timeSlot === slot && styles.timeSlotActive
+                )}
+                onClick={() => setTimeSlot(slot)}
+              >
+                <Text>{TIME_SLOT_LABELS[slot].icon} {TIME_SLOT_LABELS[slot].label}</Text>
+              </View>
+            ))}
+          </View>
 
           {exceedsMax && (
             <Text
@@ -559,7 +576,7 @@ const BookingPage: React.FC = () => {
             <View className={styles.summaryRow}>
               <Text className={styles.summaryLabel}>借用时段</Text>
               <Text className={styles.summaryValue}>
-                {startDate} ~ {endDate}（{totalDays}天）
+                {startDate} ~ {endDate}（{totalDays}天）{TIME_SLOT_LABELS[timeSlot].icon}{TIME_SLOT_LABELS[timeSlot].label}
               </Text>
             </View>
             <View className={styles.summaryRow}>

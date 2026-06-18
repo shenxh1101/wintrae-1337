@@ -155,6 +155,8 @@
   font-size: $font-size-sm;
   color: $color-text-secondary;
   width: fit-content;
+  min-height: 88rpx;
+  box-sizing: border-box;
 
   &:active {
     background: $color-bg-hover;
@@ -170,6 +172,108 @@
   margin-left: 8rpx;
   color: $color-text-tertiary;
   font-size: $font-size-md;
+}
+
+.dateRow {
+  display: flex;
+  align-items: center;
+  margin-top: $spacing-md;
+  gap: $spacing-sm;
+}
+
+.dateInput {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  min-height: 88rpx;
+  box-sizing: border-box;
+  transition: all $transition-base;
+  border: 2rpx solid transparent;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+
+  &.dateActive {
+    color: $color-primary;
+    border-color: rgba(46, 125, 91, 0.3);
+  }
+}
+
+.dateIcon {
+  margin-right: 8rpx;
+  flex-shrink: 0;
+}
+
+.datePlaceholder {
+  color: $color-text-tertiary;
+}
+
+.dateSeparator {
+  color: $color-text-tertiary;
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+.timeSlotRow {
+  display: flex;
+  margin-top: $spacing-md;
+  gap: $spacing-sm;
+}
+
+.timeSlotChip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm 0;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  min-height: 88rpx;
+  box-sizing: border-box;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  transition: all $transition-base;
+  border: 2rpx solid transparent;
+
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    border-color: transparent;
+    box-shadow: 0 4rpx 12rpx rgba(46, 125, 91, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.timeSlotLabel {
+  font-size: $font-size-xs;
+  margin-top: 4rpx;
+}
+
+.clearDateRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $spacing-sm;
+}
+
+.clearDateLink {
+  font-size: $font-size-sm;
+  color: $color-primary;
+
+  &:active {
+    opacity: 0.7;
+  }
 }
 
 .listWrap {
