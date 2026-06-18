@@ -26,6 +26,8 @@ export interface Tool {
   currentHolder?: string;
   availableDates?: string[];
   maintenanceNotice?: string;
+  maintenanceStartDate?: string;
+  maintenanceEndDate?: string;
 }
 
 // 配件接口
@@ -74,6 +76,8 @@ export interface Booking {
   returnedAt?: string;
   deductionAmount?: number;
   deductionNote?: string;
+  affectedByMaintenance?: boolean;
+  relatedNoticeId?: string;
 }
 
 // 公告类型
@@ -93,6 +97,10 @@ export interface Notice {
   relatedToolId?: string;
   relatedToolName?: string;
   relatedBookingId?: string;
+  maintenanceStartDate?: string;
+  maintenanceEndDate?: string;
+  alternativeToolId?: string;
+  alternativeToolName?: string;
 }
 
 // 用户接口

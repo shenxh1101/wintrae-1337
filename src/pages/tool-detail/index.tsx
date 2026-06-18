@@ -8,9 +8,8 @@ import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import dayjs from 'dayjs';
 import { useApp } from '@/store/AppContext';
-import { getToolById } from '@/data/tools';
 import StatusTag from '@/components/StatusTag';
-import { ToolStatus, TimeSlotType, TIME_SLOT_LABELS } from '@/types';
+import { ToolStatus, TimeSlotType, TIME_SLOT_LABELS, Tool } from '@/types';
 import styles from './index.module.scss';
 
 const TIME_SLOTS: Array<{ key: TimeSlotType; label: string; icon: string }> = [
@@ -23,16 +22,25 @@ const TIME_SLOTS: Array<{ key: TimeSlotType; label: string; icon: string }> = [
 const isSlotOccupied = (
   date: string,
   slot: TimeSlotType,
-  toolBookings: Array<{ startDate: string; endDate: string; timeSlot?: TimeSlotType; status: string }>
+  toolBookings: Array<{ startDate: string; endDate: string; timeSlot?: TimeSlotType; status: string }>,
+  tool?: Tool
 ): boolean => {
   const activeStatuses = ['pending', 'approved', 'borrowed'];
-  return toolBookings.some(b => {
+  const bookingOccupied = toolBookings.some(b => {
     if (!activeStatuses.includes(b.status)) return false;
     if (b.endDate < date || b.startDate > date) return false;
     if (!b.timeSlot || b.timeSlot === 'allday') return true;
     if (slot === 'allday') return true;
     return b.timeSlot === slot;
   });
+  if (bookingOccupied) return true;
+
+  if (tool?.maintenanceStartDate && tool?.maintenanceEndDate) {
+    if (date >= tool.maintenanceStartDate && date <= tool.maintenanceEndDate) {
+      return true;
+    }
+  }
+  return false;
 };
 
 const STATUS_CONFIG: Record<ToolStatus, { label: string; color: string; bgColor: string; icon: string }> = {
@@ -46,9 +54,9 @@ const ACC_ICONS = ['🔋', '🔌', '💡', '📦', '🛡', '🎒', '🎯', '📏
 
 const ToolDetailPage: React.FC = () => {
   const router = useRouter();
-  const { bookings } = useApp();
+  const { bookings, tools } = useApp();
   const toolId = router.params.id || 'tool-001';
-  const tool = useMemo(() => getToolById(toolId), [toolId]);
+  const tool = useMemo(() => tools.find(t => t.id === toolId), [tools, toolId]);
 
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [isFav, setIsFav] = useState(false);
@@ -164,7 +172,14 @@ const ToolDetailPage: React.FC = () => {
         <View className={styles.maintenanceBanner}>
           <Text className={styles.maintenanceBannerIcon}>🔧</Text>
           <View className={styles.maintenanceBannerContent}>
-            <Text className={styles.maintenanceBannerTitle}>工具维护停用通知</Text>
+            <Text className={styles.maintenanceBannerTitle}>
+              工具维护停用通知
+              {tool.maintenanceStartDate && tool.maintenanceEndDate && (
+                <Text className={styles.maintenanceBannerDate}>
+                  （{tool.maintenanceStartDate} ~ {tool.maintenanceEndDate}）
+                </Text>
+              )}
+            </Text>
             <Text className={styles.maintenanceBannerText}>{tool.maintenanceNotice}</Text>
           </View>
         </View>
@@ -307,7 +322,7 @@ const ToolDetailPage: React.FC = () => {
                     </View>
                     <View className={styles.slotChips}>
                       {TIME_SLOTS.map(slot => {
-                        const occupied = isSlotOccupied(date, slot.key, toolBookings);
+                        const occupied = isSlotOccupied(date, slot.key, toolBookings, tool);
                         return (
                           <View
                             key={slot.key}

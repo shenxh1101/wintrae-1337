@@ -7,9 +7,8 @@ import { View, Text, ScrollView, Image, Button, Textarea } from '@tarojs/compone
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
 import { useApp } from '@/store/AppContext';
-import { getToolById } from '@/data/tools';
 import StatusTag from '@/components/StatusTag';
-import { TIME_SLOT_LABELS, TimeSlotType, Booking } from '@/types';
+import { TIME_SLOT_LABELS, TimeSlotType, Booking, Tool } from '@/types';
 import styles from './index.module.scss';
 
 const PURPOSE_TAGS = ['家庭装修', '家具组装', '维修作业', '清洁打扫', '聚会活动', '学习办公', '其他'];
@@ -47,16 +46,25 @@ const isSameDay = (a: Date, b: Date) => {
 const isSlotOccupied = (
   date: string,
   slot: TimeSlotType,
-  bookings: Array<{ startDate: string; endDate: string; timeSlot?: TimeSlotType; status: string }>
+  bookings: Array<{ startDate: string; endDate: string; timeSlot?: TimeSlotType; status: string }>,
+  tool?: Tool
 ): boolean => {
   const activeStatuses = ['pending', 'approved', 'borrowed'];
-  return bookings.some(b => {
+  const bookingOccupied = bookings.some(b => {
     if (!activeStatuses.includes(b.status)) return false;
     if (b.endDate < date || b.startDate > date) return false;
     if (!b.timeSlot || b.timeSlot === 'allday') return true;
     if (slot === 'allday') return true;
     return b.timeSlot === slot;
   });
+  if (bookingOccupied) return true;
+
+  if (tool?.maintenanceStartDate && tool?.maintenanceEndDate) {
+    if (date >= tool.maintenanceStartDate && date <= tool.maintenanceEndDate) {
+      return true;
+    }
+  }
+  return false;
 };
 
 interface DayInfo {
@@ -69,10 +77,10 @@ interface DayInfo {
 
 const BookingPage: React.FC = () => {
   const router = useRouter();
-  const { bookings, currentUser, addBooking } = useApp();
+  const { bookings, currentUser, addBooking, tools } = useApp();
 
   const toolId = router.params.toolId || 'tool-001';
-  const tool = useMemo(() => getToolById(toolId), [toolId]);
+  const tool = useMemo(() => tools.find(t => t.id === toolId), [tools, toolId]);
 
   const today = useMemo(() => new Date(), []);
   const [calendarDate, setCalendarDate] = useState(() => new Date(today));
@@ -111,14 +119,35 @@ const BookingPage: React.FC = () => {
   }, [bookings, tool.id]);
 
   const hasConflict = useMemo(() => {
+    if (!tool) return true;
     const s = parseDate(startDate).getTime();
     const e = parseDate(endDate).getTime();
+
+    if (tool.maintenanceStartDate && tool.maintenanceEndDate) {
+      const ms = parseDate(tool.maintenanceStartDate).getTime();
+      const me = parseDate(tool.maintenanceEndDate).getTime();
+      if (s <= me && e >= ms) {
+        return true;
+      }
+    }
+
+    if (startDate === endDate) {
+      return existingBookings.some(b => {
+        const bs = parseDate(b.startDate).getTime();
+        const be = parseDate(b.endDate).getTime();
+        if (s > be || e < bs) return false;
+        if (!b.timeSlot || b.timeSlot === 'allday') return true;
+        if (timeSlot === 'allday') return true;
+        return b.timeSlot === timeSlot;
+      });
+    }
+
     return existingBookings.some(b => {
       const bs = parseDate(b.startDate).getTime();
       const be = parseDate(b.endDate).getTime();
       return s <= be && e >= bs;
     });
-  }, [startDate, endDate, existingBookings]);
+  }, [startDate, endDate, timeSlot, existingBookings, tool]);
 
   const isBookedDates = useMemo(() => {
     const set = new Set<string>();
@@ -159,7 +188,12 @@ const BookingPage: React.FC = () => {
       const curDate = new Date(year, month, d);
       const dateStr = formatDate(curDate);
       const isPast = curDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const isDisabled = isBookedDates.has(dateStr);
+      let isDisabled = isPast;
+      if (tool?.maintenanceStartDate && tool?.maintenanceEndDate) {
+        if (dateStr >= tool.maintenanceStartDate && dateStr <= tool.maintenanceEndDate) {
+          isDisabled = true;
+        }
+      }
       week.push({
         day: d,
         dateStr,
@@ -194,7 +228,7 @@ const BookingPage: React.FC = () => {
 
   const calendarMatrix = useMemo(
     () => buildCalendarMatrix(calendarDate.getFullYear(), calendarDate.getMonth()),
-    [calendarDate, isBookedDates, today]
+    [calendarDate, today, tool]
   );
 
   const isInRange = (dateStr: string) => {
@@ -256,7 +290,21 @@ const BookingPage: React.FC = () => {
       if (exceedsMax) {
         Taro.showToast({ title: `借用天数不能超过${tool.maxBorrowDays}天`, icon: 'none' });
       } else if (hasConflict) {
-        Taro.showToast({ title: '所选日期已有预约，请更换', icon: 'none' });
+        if (tool?.maintenanceStartDate && tool?.maintenanceEndDate) {
+          const ms = parseDate(tool.maintenanceStartDate).getTime();
+          const me = parseDate(tool.maintenanceEndDate).getTime();
+          const s = parseDate(startDate).getTime();
+          const e = parseDate(endDate).getTime();
+          if (s <= me && e >= ms) {
+            Taro.showToast({ title: `工具维护中（${tool.maintenanceStartDate}~${tool.maintenanceEndDate}）`, icon: 'none' });
+            return;
+          }
+        }
+        if (startDate === endDate) {
+          Taro.showToast({ title: `该时段${TIME_SLOT_LABELS[timeSlot].label}已被预约`, icon: 'none' });
+        } else {
+          Taro.showToast({ title: '所选日期范围已有预约', icon: 'none' });
+        }
       } else if (purpose.trim().length < 2) {
         Taro.showToast({ title: '请填写借用用途（至少2字）', icon: 'none' });
       } else if (!agree) {
@@ -267,7 +315,7 @@ const BookingPage: React.FC = () => {
 
     Taro.showModal({
       title: '确认提交预约',
-      content: `确定申请借用「${tool.name}」吗？\n时间：${startDate} 至 ${endDate}\n共${totalDays}天，押金 ¥${tool.deposit}`,
+      content: `确定申请借用「${tool.name}」吗？\n时间：${startDate} 至 ${endDate}${startDate === endDate ? `（${TIME_SLOT_LABELS[timeSlot].label}）` : ''}\n共${totalDays}天，押金 ¥${tool.deposit}`,
       confirmText: '确认申请',
       success: res => {
         if (!res.confirm) return;
@@ -436,7 +484,7 @@ const BookingPage: React.FC = () => {
           <View className={styles.timeSlotRow}>
             {(Object.keys(TIME_SLOT_LABELS) as TimeSlotType[]).map(slot => {
               const isMultiDay = startDate !== endDate;
-              const isDisabled = isMultiDay ? slot !== 'allday' : isSlotOccupied(startDate, slot, existingBookings);
+              const isDisabled = isMultiDay ? slot !== 'allday' : isSlotOccupied(startDate, slot, existingBookings, tool);
               return (
                 <View
                   key={slot}

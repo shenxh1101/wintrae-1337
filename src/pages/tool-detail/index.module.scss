@@ -510,6 +510,16 @@
   font-weight: $font-weight-bold;
   color: $color-warning;
   margin-bottom: 6rpx;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.maintenanceBannerDate {
+  font-size: 24rpx;
+  font-weight: $font-weight-medium;
+  color: #AD5A00;
 }
 
 .maintenanceBannerText {

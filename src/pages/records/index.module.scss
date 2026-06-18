@@ -262,6 +262,26 @@
   line-height: $line-height-normal;
 }
 
+.maintenanceDate {
+  font-size: 22rpx;
+  font-weight: $font-weight-medium;
+  color: #AD5A00;
+  margin-left: 8rpx;
+}
+
+.affectedAlert {
+  background: rgba(255, 77, 79, 0.08);
+  border-left-color: $color-error;
+}
+
+.alternativeText {
+  display: block;
+  margin-top: 8rpx;
+  font-size: $font-size-xs;
+  color: $color-info;
+  font-weight: $font-weight-medium;
+}
+
 .deductionAmount {
   color: $color-error !important;
   font-weight: $font-weight-semibold;

@@ -7,7 +7,6 @@ import { View, Text, ScrollView, Image, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useApp } from '@/store/AppContext';
-import { TOOLS } from '@/data/tools';
 import { STATUS_LABELS, FILTER_TABS } from '@/data/bookings';
 import StatusTag from '@/components/StatusTag';
 import EmptyState from '@/components/EmptyState';
@@ -21,7 +20,7 @@ const CONDITION_MAP: Record<string, { label: string; cls: string }> = {
 };
 
 const RecordsPage: React.FC = () => {
-  const { bookings, currentUser, cancelBooking } = useApp();
+  const { bookings, currentUser, cancelBooking, tools, notices } = useApp();
   const [activeTab, setActiveTab] = useState<string>('all');
 
   const myBookings = useMemo(
@@ -125,14 +124,45 @@ const RecordsPage: React.FC = () => {
         )}
 
         {(() => {
-          const tool = TOOLS.find(t => t.id === booking.toolId);
+          const tool = tools.find(t => t.id === booking.toolId);
           const maintenanceNotice = tool?.maintenanceNotice;
+          const affectedNotice = booking.relatedNoticeId ? notices.find(n => n.id === booking.relatedNoticeId) : null;
+
+          if (booking.affectedByMaintenance && affectedNotice) {
+            return (
+              <View className={classnames(styles.maintenanceAlert, styles.affectedAlert)}>
+                <Text className={styles.maintenanceIcon}>⚠️</Text>
+                <View className={styles.maintenanceContent}>
+                  <Text className={styles.maintenanceTitle}>
+                    您的预约受维护影响
+                    {affectedNotice.maintenanceStartDate && affectedNotice.maintenanceEndDate && (
+                      <Text className={styles.maintenanceDate}>
+                        （{affectedNotice.maintenanceStartDate} ~ {affectedNotice.maintenanceEndDate}）
+                      </Text>
+                    )}
+                  </Text>
+                  <Text className={styles.maintenanceText}>{affectedNotice.content}</Text>
+                  {affectedNotice.alternativeToolName && (
+                    <Text className={styles.alternativeText}>建议替代工具：{affectedNotice.alternativeToolName}</Text>
+                  )}
+                </View>
+              </View>
+            );
+          }
+
           if (maintenanceNotice) {
             return (
               <View className={styles.maintenanceAlert}>
-                <Text className={styles.maintenanceIcon}>⚠️</Text>
+                <Text className={styles.maintenanceIcon}>🔧</Text>
                 <View className={styles.maintenanceContent}>
-                  <Text className={styles.maintenanceTitle}>工具维护提醒</Text>
+                  <Text className={styles.maintenanceTitle}>
+                    工具维护停用通知
+                    {tool?.maintenanceStartDate && tool?.maintenanceEndDate && (
+                      <Text className={styles.maintenanceDate}>
+                        （{tool.maintenanceStartDate} ~ {tool.maintenanceEndDate}）
+                      </Text>
+                    )}
+                  </Text>
                   <Text className={styles.maintenanceText}>{maintenanceNotice}</Text>
                 </View>
               </View>

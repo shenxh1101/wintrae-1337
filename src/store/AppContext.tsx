@@ -4,6 +4,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import Taro from '@tarojs/taro';
+import dayjs from 'dayjs';
 import { Tool, Booking, Notice, User, BookingStatus } from '@/types';
 import { TOOLS } from '@/data/tools';
 import { BOOKINGS } from '@/data/bookings';
@@ -46,6 +47,8 @@ interface AppContextValue extends AppState {
   addBooking: (booking: Omit<Booking, 'id' | 'createdAt'>) => void;
   cancelBooking: (bookingId: string) => void;
   updateBookingStatus: (bookingId: string, status: BookingStatus, extra?: Partial<Booking>) => void;
+  addNotice: (notice: Omit<Notice, 'id' | 'createdAt'>) => void;
+  updateTool: (toolId: string, patch: Partial<Tool>) => void;
   markNoticeRead: (noticeId: string) => void;
   toggleRole: () => void;
 }
@@ -120,6 +123,51 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   }, []);
 
+  const updateTool = useCallback((toolId: string, patch: Partial<Tool>) => {
+    setTools(prev => prev.map(t => (t.id === toolId ? { ...t, ...patch } : t)));
+    console.log('[AppContext] updateTool:', toolId, patch);
+  }, []);
+
+  const addNotice = useCallback((noticeData: Omit<Notice, 'id' | 'createdAt'>) => {
+    const newNotice: Notice = {
+      ...noticeData,
+      id: `nt-${Date.now()}`,
+      createdAt: new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-'),
+    };
+    setNotices(prev => [newNotice, ...prev]);
+    console.log('[AppContext] addNotice:', newNotice);
+
+    if (newNotice.type === 'maintenance' && newNotice.relatedToolId) {
+      const toolId = newNotice.relatedToolId;
+      const patch: Partial<Tool> = {
+        maintenanceNotice: newNotice.content,
+        maintenanceStartDate: newNotice.maintenanceStartDate,
+        maintenanceEndDate: newNotice.maintenanceEndDate,
+        status: 'maintenance',
+      };
+      setTools(prev => prev.map(t => (t.id === toolId ? { ...t, ...patch } : t)));
+      console.log('[AppContext] 维护公告同步到工具:', toolId, patch);
+
+      if (newNotice.maintenanceStartDate && newNotice.maintenanceEndDate) {
+        const start = newNotice.maintenanceStartDate;
+        const end = newNotice.maintenanceEndDate;
+        setBookings(prev => prev.map(b => {
+          if (b.toolId !== toolId) return b;
+          if (b.status === 'cancelled' || b.status === 'returned') return b;
+          if (b.endDate < start || b.startDate > end) return b;
+          return {
+            ...b,
+            affectedByMaintenance: true,
+            relatedNoticeId: newNotice.id,
+          };
+        }));
+        console.log('[AppContext] 标记受影响的预约:', toolId, start, end);
+      }
+    }
+
+    return newNotice;
+  }, []);
+
   const toggleRole = useCallback(() => {
     setCurrentUser(prev => ({
       ...prev,
@@ -136,6 +184,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     addBooking,
     cancelBooking,
     updateBookingStatus,
+    addNotice,
+    updateTool,
     markNoticeRead,
     toggleRole,
   };

@@ -3,7 +3,7 @@
 // ============================================
 
 import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, Button } from '@tarojs/components';
+import { View, Text, ScrollView, Button, Picker } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useApp } from '@/store/AppContext';
@@ -13,13 +13,23 @@ import {
   PRIORITY_LABELS,
 } from '@/data/notices';
 import EmptyState from '@/components/EmptyState';
-import { Notice } from '@/types';
+import { Notice, Tool } from '@/types';
 import styles from './index.module.scss';
 
 const NoticesPage: React.FC = () => {
-  const { notices, markNoticeRead } = useApp();
+  const { notices, markNoticeRead, addNotice, isAdmin, tools } = useApp();
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [publishForm, setPublishForm] = useState({
+    toolId: '',
+    toolName: '',
+    startDate: '',
+    endDate: '',
+    reason: '',
+    alternativeToolId: '',
+    alternativeToolName: '',
+  });
 
   const highPriorityCount = useMemo(
     () => notices.filter(n => n.priority === 'high' && !n.isRead).length,
@@ -83,6 +93,74 @@ const NoticesPage: React.FC = () => {
     });
   };
 
+  const handlePublishMaintenance = () => {
+    const { toolId, startDate, endDate, reason, alternativeToolId, alternativeToolName } = publishForm;
+    if (!toolId) {
+      Taro.showToast({ title: '请选择维护工具', icon: 'none' });
+      return;
+    }
+    if (!startDate || !endDate) {
+      Taro.showToast({ title: '请选择维护日期范围', icon: 'none' });
+      return;
+    }
+    if (startDate > endDate) {
+      Taro.showToast({ title: '结束日期不能早于开始日期', icon: 'none' });
+      return;
+    }
+    if (!reason.trim()) {
+      Taro.showToast({ title: '请填写维护原因', icon: 'none' });
+      return;
+    }
+
+    const tool = tools.find(t => t.id === toolId);
+    const content = `${reason}${alternativeToolName ? `\n建议替代工具：${alternativeToolName}` : ''}`;
+
+    Taro.showModal({
+      title: '确认发布维护公告',
+      content: `工具：${tool?.name}\n时间：${startDate} ~ ${endDate}\n原因：${reason}${alternativeToolName ? `\n替代工具：${alternativeToolName}` : ''}`,
+      confirmText: '确认发布',
+      success: res => {
+        if (!res.confirm) return;
+
+        addNotice({
+          title: `【维护通知】${tool?.name} 停用维护`,
+          type: 'maintenance',
+          typeName: '维护通知',
+          content,
+          summary: `${tool?.name} 将于 ${startDate} 至 ${endDate} 进行维护`,
+          priority: 'high',
+          relatedToolId: toolId,
+          relatedToolName: tool?.name,
+          maintenanceStartDate: startDate,
+          maintenanceEndDate: endDate,
+          alternativeToolId,
+          alternativeToolName,
+        });
+
+        setShowPublishModal(false);
+        setPublishForm({
+          toolId: '',
+          toolName: '',
+          startDate: '',
+          endDate: '',
+          reason: '',
+          alternativeToolId: '',
+          alternativeToolName: '',
+        });
+        Taro.showToast({ title: '维护公告已发布', icon: 'success' });
+      },
+    });
+  };
+
+  const availableTools = useMemo(() => {
+    return tools.filter(t => t.status !== 'maintenance');
+  }, [tools]);
+
+  const otherTools = useMemo(() => {
+    if (!publishForm.toolId) return tools;
+    return tools.filter(t => t.id !== publishForm.toolId);
+  }, [tools, publishForm.toolId]);
+
   return (
     <ScrollView
       className={styles.page}
@@ -124,8 +202,23 @@ const NoticesPage: React.FC = () => {
           marginBottom: '16rpx',
           display: 'flex',
           justifyContent: 'flex-end',
+          gap: '16rpx',
         }}
       >
+        {isAdmin && (
+          <Text
+            style={{
+              fontSize: '24rpx',
+              color: '#FAAD14',
+              padding: '8rpx 20rpx',
+              background: 'rgba(250,173,20,0.1)',
+              borderRadius: '24rpx',
+            }}
+            onClick={() => setShowPublishModal(true)}
+          >
+            🔧 发布维护
+          </Text>
+        )}
         {unreadCount > 0 && (
           <Text
             style={{
@@ -299,6 +392,134 @@ const NoticesPage: React.FC = () => {
                   我已知晓
                 </Button>
               )}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {showPublishModal && (
+        <View className={styles.modalOverlay}>
+          <View className={styles.modalContent} style={{ maxHeight: '90vh', width: '90%' }}>
+            <View className={styles.modalHeader}>
+              <Text className={styles.modalTitle}>🔧 发布维护通知</Text>
+              <View className={styles.closeBtn} onClick={() => setShowPublishModal(false)}>
+                ×
+              </View>
+            </View>
+
+            <ScrollView className={styles.modalBody} scrollY>
+              <View className={styles.formSection}>
+                <Text className={styles.formLabel}>选择维护工具</Text>
+                <View className={styles.formRow}>
+                  <Picker
+                    mode="selector"
+                    range={availableTools.map(t => t.name)}
+                    rangeKey="name"
+                    value={availableTools.findIndex(t => t.id === publishForm.toolId)}
+                    onChange={e => {
+                      const idx = Number(e.detail.value);
+                      const tool = availableTools[idx];
+                      if (tool) {
+                        setPublishForm(f => ({ ...f, toolId: tool.id, toolName: tool.name }));
+                      }
+                    }}
+                  >
+                    <View className={styles.formPicker}>
+                      <Text>{publishForm.toolName || '请选择维护工具'}</Text>
+                      <Text>▼</Text>
+                    </View>
+                  </Picker>
+                </View>
+              </View>
+
+              <View className={styles.formSection}>
+                <Text className={styles.formLabel}>维护日期范围</Text>
+                <View className={styles.formDateRow}>
+                  <Picker
+                    mode="date"
+                    value={publishForm.startDate}
+                    onChange={e => {
+                      setPublishForm(f => ({ ...f, startDate: e.detail.value }));
+                    }}
+                  >
+                    <View className={styles.formPicker}>
+                      <Text>{publishForm.startDate || '开始日期'}</Text>
+                      <Text>▼</Text>
+                    </View>
+                  </Picker>
+                  <Text className={styles.dateDivider}>至</Text>
+                  <Picker
+                    mode="date"
+                    value={publishForm.endDate}
+                    onChange={e => {
+                      setPublishForm(f => ({ ...f, endDate: e.detail.value }));
+                    }}
+                  >
+                    <View className={styles.formPicker}>
+                      <Text>{publishForm.endDate || '结束日期'}</Text>
+                      <Text>▼</Text>
+                    </View>
+                  </Picker>
+                </View>
+              </View>
+
+              <View className={styles.formSection}>
+                <Text className={styles.formLabel}>维护原因</Text>
+                <View className={styles.formRow}>
+                  <textarea
+                    className={styles.formTextarea}
+                    placeholder="请输入维护原因（如：定期检修、故障维修、配件更换等）"
+                    value={publishForm.reason}
+                    onInput={e => setPublishForm(f => ({ ...f, reason: e.detail.value }))}
+                    maxlength={200}
+                  />
+                </View>
+              </View>
+
+              <View className={styles.formSection}>
+                <Text className={styles.formLabel}>建议替代工具（可选）</Text>
+                <View className={styles.formRow}>
+                  <Picker
+                    mode="selector"
+                    range={otherTools.map(t => t.name)}
+                    rangeKey="name"
+                    value={otherTools.findIndex(t => t.id === publishForm.alternativeToolId)}
+                    onChange={e => {
+                      const idx = Number(e.detail.value);
+                      const tool = otherTools[idx];
+                      if (tool) {
+                        setPublishForm(f => ({
+                          ...f,
+                          alternativeToolId: tool.id,
+                          alternativeToolName: tool.name,
+                        }));
+                      }
+                    }}
+                  >
+                    <View className={styles.formPicker}>
+                      <Text>{publishForm.alternativeToolName || '请选择替代工具（可选）'}</Text>
+                      <Text>▼</Text>
+                    </View>
+                  </Picker>
+                </View>
+              </View>
+
+              <View style={{ height: 20 }} />
+            </ScrollView>
+
+            <View className={styles.modalFooter}>
+              <Button
+                className={classnames(styles.footerBtn, styles.btnSecondary)}
+                onClick={() => setShowPublishModal(false)}
+              >
+                取消
+              </Button>
+              <Button
+                className={classnames(styles.footerBtn, styles.btnPrimary)}
+                onClick={handlePublishMaintenance}
+              >
+                发布维护通知
+              </Button>
             </View>
           </View>
         </View>
