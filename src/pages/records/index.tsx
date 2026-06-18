@@ -7,6 +7,7 @@ import { View, Text, ScrollView, Image, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useApp } from '@/store/AppContext';
+import { TOOLS } from '@/data/tools';
 import { STATUS_LABELS, FILTER_TABS } from '@/data/bookings';
 import StatusTag from '@/components/StatusTag';
 import EmptyState from '@/components/EmptyState';
@@ -123,7 +124,74 @@ const RecordsPage: React.FC = () => {
           </View>
         )}
 
-        {booking.conditionPhotos && booking.conditionPhotos.length > 0 && (
+        {(() => {
+          const tool = TOOLS.find(t => t.id === booking.toolId);
+          const maintenanceNotice = tool?.maintenanceNotice;
+          if (maintenanceNotice) {
+            return (
+              <View className={styles.maintenanceAlert}>
+                <Text className={styles.maintenanceIcon}>⚠️</Text>
+                <View className={styles.maintenanceContent}>
+                  <Text className={styles.maintenanceTitle}>工具维护提醒</Text>
+                  <Text className={styles.maintenanceText}>{maintenanceNotice}</Text>
+                </View>
+              </View>
+            );
+          }
+          return null;
+        })()}
+
+        {booking.lendPhotos && booking.lendPhotos.length > 0 && (
+          <View className={styles.photoSection}>
+            <Text className={styles.photoSectionTitle}>
+              <Text className={styles.photoSectionIcon}>📷</Text>
+              借出时照片
+            </Text>
+            <View className={styles.photoGrid}>
+              {booking.lendPhotos.map((src, idx) => (
+                <Image
+                  key={`lend-${idx}`}
+                  className={styles.photoThumb}
+                  src={src}
+                  mode="aspectFill"
+                  onClick={() => {
+                    Taro.previewImage({
+                      current: src,
+                      urls: booking.lendPhotos!,
+                    });
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {booking.returnPhotos && booking.returnPhotos.length > 0 && (
+          <View className={styles.photoSection}>
+            <Text className={styles.photoSectionTitle}>
+              <Text className={styles.photoSectionIcon}>📷</Text>
+              归还时照片
+            </Text>
+            <View className={styles.photoGrid}>
+              {booking.returnPhotos.map((src, idx) => (
+                <Image
+                  key={`return-${idx}`}
+                  className={styles.photoThumb}
+                  src={src}
+                  mode="aspectFill"
+                  onClick={() => {
+                    Taro.previewImage({
+                      current: src,
+                      urls: booking.returnPhotos!,
+                    });
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {!booking.lendPhotos && booking.conditionPhotos && booking.conditionPhotos.length > 0 && (
           <View className={styles.photoSection}>
             <Text className={styles.photoSectionTitle}>
               <Text className={styles.photoSectionIcon}>📷</Text>
@@ -132,7 +200,7 @@ const RecordsPage: React.FC = () => {
             <View className={styles.photoGrid}>
               {booking.conditionPhotos.map((src, idx) => (
                 <Image
-                  key={idx}
+                  key={`old-${idx}`}
                   className={styles.photoThumb}
                   src={src}
                   mode="aspectFill"
@@ -178,6 +246,30 @@ const RecordsPage: React.FC = () => {
                 <Text className={styles.detailLabel}>归还时间</Text>
                 <Text className={styles.detailValue}>{booking.returnedAt}</Text>
               </View>
+            )}
+            {booking.deductionAmount && booking.deductionAmount > 0 && (
+              <>
+                <View className={styles.detailRow}>
+                  <Text className={styles.detailLabel}>押金金额</Text>
+                  <Text className={styles.detailValue}>¥{booking.deposit}</Text>
+                </View>
+                <View className={styles.detailRow}>
+                  <Text className={styles.detailLabel}>扣款金额</Text>
+                  <Text className={classnames(styles.detailValue, styles.deductionAmount)}>-¥{booking.deductionAmount}</Text>
+                </View>
+                <View className={styles.detailRow}>
+                  <Text className={styles.detailLabel}>应退押金</Text>
+                  <Text className={classnames(styles.detailValue, styles.refundAmount)}>¥{booking.deposit - booking.deductionAmount}</Text>
+                </View>
+                {booking.deductionNote && (
+                  <View className={styles.detailRow}>
+                    <Text className={styles.detailLabel}>处理说明</Text>
+                    <Text className={styles.detailValue} style={{ maxWidth: '60%', textAlign: 'right' }}>
+                      {booking.deductionNote}
+                    </Text>
+                  </View>
+                )}
+              </>
             )}
           </View>
         )}

@@ -454,3 +454,87 @@
   margin-bottom: 8rpx;
   font-size: $font-size-sm;
 }
+
+.photoHint {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  padding: $spacing-sm $spacing-md;
+  background: rgba(46, 125, 91, 0.08);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+}
+
+.photoHintIcon {
+  font-size: $font-size-md;
+  flex-shrink: 0;
+}
+
+.photoHintText {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  line-height: $line-height-normal;
+}
+
+.deductionSection {
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.deductionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.deductionLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.deductionValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.deductionInput {
+  width: 240rpx;
+  height: 64rpx;
+  background: $color-bg-card;
+  border-radius: $radius-sm;
+  padding: 0 $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  text-align: right;
+}
+
+.deductionRefund {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-success;
+}
+
+.deductionNoteWrap {
+  margin-top: $spacing-sm;
+}
+
+.deductionNote {
+  width: 100%;
+  min-height: 120rpx;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+  box-sizing: border-box;
+  line-height: $line-height-normal;
+}

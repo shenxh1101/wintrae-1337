@@ -25,6 +25,7 @@ export interface Tool {
   imageIds: number[];
   currentHolder?: string;
   availableDates?: string[];
+  maintenanceNotice?: string;
 }
 
 // 配件接口
@@ -65,10 +66,14 @@ export interface Booking {
   deposit: number;
   createdAt: string;
   accessoriesChecked?: boolean[];
+  lendPhotos?: string[];
+  returnPhotos?: string[];
   conditionPhotos?: string[];
   returnCondition?: 'good' | 'damaged' | 'lost';
   returnNote?: string;
   returnedAt?: string;
+  deductionAmount?: number;
+  deductionNote?: string;
 }
 
 // 公告类型
@@ -87,6 +92,7 @@ export interface Notice {
   isRead?: boolean;
   relatedToolId?: string;
   relatedToolName?: string;
+  relatedBookingId?: string;
 }
 
 // 用户接口

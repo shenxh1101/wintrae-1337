@@ -44,6 +44,21 @@ const isSameDay = (a: Date, b: Date) => {
   );
 };
 
+const isSlotOccupied = (
+  date: string,
+  slot: TimeSlotType,
+  bookings: Array<{ startDate: string; endDate: string; timeSlot?: TimeSlotType; status: string }>
+): boolean => {
+  const activeStatuses = ['pending', 'approved', 'borrowed'];
+  return bookings.some(b => {
+    if (!activeStatuses.includes(b.status)) return false;
+    if (b.endDate < date || b.startDate > date) return false;
+    if (!b.timeSlot || b.timeSlot === 'allday') return true;
+    if (slot === 'allday') return true;
+    return b.timeSlot === slot;
+  });
+};
+
 interface DayInfo {
   day: number;
   dateStr: string;
@@ -195,6 +210,7 @@ const BookingPage: React.FC = () => {
     if (selecting === 'start') {
       setStartDate(day.dateStr);
       setEndDate(day.dateStr);
+      setTimeSlot('allday');
       setSelecting('end');
     } else {
       const clicked = parseDate(day.dateStr).getTime();
@@ -202,9 +218,13 @@ const BookingPage: React.FC = () => {
       if (clicked < startT) {
         setStartDate(day.dateStr);
         setEndDate(day.dateStr);
+        setTimeSlot('allday');
         setSelecting('end');
       } else {
         setEndDate(day.dateStr);
+        if (day.dateStr !== startDate) {
+          setTimeSlot('allday');
+        }
         setSelecting('start');
       }
     }
@@ -414,18 +434,33 @@ const BookingPage: React.FC = () => {
           <View className={styles.daysBadge}>共 {totalDays} 天</View>
 
           <View className={styles.timeSlotRow}>
-            {(Object.keys(TIME_SLOT_LABELS) as TimeSlotType[]).map(slot => (
-              <View
-                key={slot}
-                className={classnames(
-                  styles.timeSlotChip,
-                  timeSlot === slot && styles.timeSlotActive
-                )}
-                onClick={() => setTimeSlot(slot)}
-              >
-                <Text>{TIME_SLOT_LABELS[slot].icon} {TIME_SLOT_LABELS[slot].label}</Text>
-              </View>
-            ))}
+            {(Object.keys(TIME_SLOT_LABELS) as TimeSlotType[]).map(slot => {
+              const isMultiDay = startDate !== endDate;
+              const isDisabled = isMultiDay ? slot !== 'allday' : isSlotOccupied(startDate, slot, existingBookings);
+              return (
+                <View
+                  key={slot}
+                  className={classnames(
+                    styles.timeSlotChip,
+                    timeSlot === slot && styles.timeSlotActive,
+                    isDisabled && styles.timeSlotDisabled
+                  )}
+                  onClick={() => {
+                    if (isDisabled) {
+                      Taro.showToast({
+                        title: isMultiDay ? '跨天借用只能选全天' : '该时段已被预约',
+                        icon: 'none',
+                      });
+                      return;
+                    }
+                    setTimeSlot(slot);
+                  }}
+                >
+                  <Text>{TIME_SLOT_LABELS[slot].icon} {TIME_SLOT_LABELS[slot].label}</Text>
+                  {isDisabled && <Text className={styles.timeSlotDisabledLabel}>{isMultiDay ? '跨天' : '已占'}</Text>}
+                </View>
+              );
+            })}
           </View>
 
           {exceedsMax && (

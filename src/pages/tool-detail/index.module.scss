@@ -483,3 +483,124 @@
     height: 100%;
   }
 }
+
+.maintenanceBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin: $spacing-md $page-padding 0;
+  padding: $spacing-md;
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.15) 0%, rgba(250, 173, 20, 0.08) 100%);
+  border-radius: $radius-lg;
+  border-left: 8rpx solid $color-warning;
+}
+
+.maintenanceBannerIcon {
+  font-size: 48rpx;
+  flex-shrink: 0;
+}
+
+.maintenanceBannerContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.maintenanceBannerTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-warning;
+  margin-bottom: 6rpx;
+}
+
+.maintenanceBannerText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
+.slotSection {
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.slotSectionTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.slotDateRow {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-sm 0;
+  align-items: flex-start;
+}
+
+.slotDateInfo {
+  flex-shrink: 0;
+  width: 120rpx;
+  text-align: center;
+  padding: $spacing-xs;
+  background: $color-primary-bg;
+  border-radius: $radius-sm;
+}
+
+.slotDateValue {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.slotWeekday {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.slotChips {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+}
+
+.slotChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  padding: 12rpx 8rpx;
+  background: rgba(82, 196, 26, 0.08);
+  border: 2rpx solid rgba(82, 196, 26, 0.2);
+  border-radius: $radius-sm;
+  transition: all $transition-base;
+
+  &.slotOccupied {
+    background: rgba(255, 77, 79, 0.08);
+    border-color: rgba(255, 77, 79, 0.2);
+  }
+}
+
+.slotChipIcon {
+  font-size: 28rpx;
+}
+
+.slotChipLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-success;
+
+  .slotOccupied & {
+    color: $color-error;
+  }
+}
+
+.slotChipStatus {
+  font-size: 18rpx;
+  color: $color-error;
+  font-weight: $font-weight-semibold;
+}

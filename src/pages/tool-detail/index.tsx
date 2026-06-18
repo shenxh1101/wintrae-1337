@@ -6,11 +6,34 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, Image, Button } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import classnames from 'classnames';
+import dayjs from 'dayjs';
 import { useApp } from '@/store/AppContext';
 import { getToolById } from '@/data/tools';
 import StatusTag from '@/components/StatusTag';
-import { ToolStatus } from '@/types';
+import { ToolStatus, TimeSlotType, TIME_SLOT_LABELS } from '@/types';
 import styles from './index.module.scss';
+
+const TIME_SLOTS: Array<{ key: TimeSlotType; label: string; icon: string }> = [
+  { key: 'morning', label: '上午', icon: '🌅' },
+  { key: 'afternoon', label: '下午', icon: '☀️' },
+  { key: 'evening', label: '晚上', icon: '🌙' },
+  { key: 'allday', label: '全天', icon: '📅' },
+];
+
+const isSlotOccupied = (
+  date: string,
+  slot: TimeSlotType,
+  toolBookings: Array<{ startDate: string; endDate: string; timeSlot?: TimeSlotType; status: string }>
+): boolean => {
+  const activeStatuses = ['pending', 'approved', 'borrowed'];
+  return toolBookings.some(b => {
+    if (!activeStatuses.includes(b.status)) return false;
+    if (b.endDate < date || b.startDate > date) return false;
+    if (!b.timeSlot || b.timeSlot === 'allday') return true;
+    if (slot === 'allday') return true;
+    return b.timeSlot === slot;
+  });
+};
 
 const STATUS_CONFIG: Record<ToolStatus, { label: string; color: string; bgColor: string; icon: string }> = {
   available: { label: '可借用', color: '#52C41A', bgColor: 'rgba(82, 196, 26, 0.1)', icon: '✅' },
@@ -58,11 +81,23 @@ const ToolDetailPage: React.FC = () => {
       'borrowed',
     ];
     return bookings
-      .filter(b => b.toolId === tool.id && activeStatuses.includes(b.status as any))
-      .slice(0, 5);
+      .filter(b => b.toolId === tool.id && activeStatuses.includes(b.status as any));
   }, [bookings, tool.id]);
 
-  const canBook = tool.status === 'available' || tool.status === 'reserved';
+  const next3Days = useMemo(() => {
+    const dates: string[] = [];
+    const available = tool.availableDates || [];
+    const today = dayjs();
+    for (let i = 0; i < 3; i++) {
+      const d = today.add(i, 'day').format('YYYY-MM-DD');
+      if (available.includes(d)) {
+        dates.push(d);
+      }
+    }
+    return dates;
+  }, [tool.availableDates]);
+
+  const canBook = (tool.status === 'available' || tool.status === 'reserved') && !tool.maintenanceNotice;
 
   const handleBook = () => {
     if (!canBook) {
@@ -124,6 +159,16 @@ const ToolDetailPage: React.FC = () => {
           </View>
         </View>
       </View>
+
+      {tool.maintenanceNotice && (
+        <View className={styles.maintenanceBanner}>
+          <Text className={styles.maintenanceBannerIcon}>🔧</Text>
+          <View className={styles.maintenanceBannerContent}>
+            <Text className={styles.maintenanceBannerTitle}>工具维护停用通知</Text>
+            <Text className={styles.maintenanceBannerText}>{tool.maintenanceNotice}</Text>
+          </View>
+        </View>
+      )}
 
       {heroImages.length > 1 && (
         <View className={styles.pageBody} style={{ marginTop: 16 }}>
@@ -248,8 +293,41 @@ const ToolDetailPage: React.FC = () => {
           </View>
           <View className={styles.scheduleWrap}>
             <Text className={styles.scheduleHint}>
-              💡 绿底=可预约日期，红底=不可预约。点击可前往预约页。
+              💡 绿底=可预约，红底=已占用，灰底=不可预约。点击可前往预约页。
             </Text>
+
+            {next3Days.length > 0 && (
+              <View className={styles.slotSection}>
+                <Text className={styles.slotSectionTitle}>近3天可约时段</Text>
+                {next3Days.map(date => (
+                  <View key={date} className={styles.slotDateRow}>
+                    <View className={styles.slotDateInfo}>
+                      <Text className={styles.slotDateValue}>{formatShortDate(date)}</Text>
+                      <Text className={styles.slotWeekday}>{getWeekday(date)}</Text>
+                    </View>
+                    <View className={styles.slotChips}>
+                      {TIME_SLOTS.map(slot => {
+                        const occupied = isSlotOccupied(date, slot.key, toolBookings);
+                        return (
+                          <View
+                            key={slot.key}
+                            className={classnames(
+                              styles.slotChip,
+                              occupied && styles.slotOccupied,
+                            )}
+                          >
+                            <Text className={styles.slotChipIcon}>{slot.icon}</Text>
+                            <Text className={styles.slotChipLabel}>{slot.label}</Text>
+                            {occupied && <Text className={styles.slotChipStatus}>已占</Text>}
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+
             {tool.availableDates && tool.availableDates.length > 0 ? (
               <View className={styles.dateChips}>
                 {tool.availableDates.map(date => (

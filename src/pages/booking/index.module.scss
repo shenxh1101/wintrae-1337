@@ -630,6 +630,9 @@
 }
 
 .timeSlotChip {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
   padding: 14rpx 28rpx;
   background: $color-bg-hover;
   border-radius: $radius-button;
@@ -645,7 +648,23 @@
     font-weight: $font-weight-medium;
   }
 
+  &.timeSlotDisabled {
+    background: $color-bg-hover;
+    color: $color-text-disabled;
+    border-color: $color-border;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
   &:active {
     transform: scale(0.97);
   }
+}
+
+.timeSlotDisabledLabel {
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 20rpx;
+  background: rgba(0,0,0,0.1);
+  color: $color-text-tertiary;
 }

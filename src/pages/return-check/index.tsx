@@ -3,7 +3,7 @@
 // ============================================
 
 import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, Image, Button, Textarea } from '@tarojs/components';
+import { View, Text, ScrollView, Image, Button, Textarea, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import { useApp } from '@/store/AppContext';
@@ -18,9 +18,12 @@ type TabType = 'lend' | 'return';
 
 interface CheckState {
   accessoriesChecked: boolean[];
-  photos: string[];
+  lendPhotos: string[];
+  returnPhotos: string[];
   condition: 'good' | 'damaged' | 'lost' | null;
   note: string;
+  deductionAmount: string;
+  deductionNote: string;
 }
 
 const ReturnCheckPage: React.FC = () => {
@@ -30,11 +33,16 @@ const ReturnCheckPage: React.FC = () => {
 
   const getOrInitState = (bookingId: string, accLen: number): CheckState => {
     if (!checkStates[bookingId]) {
+      const booking = bookings.find(b => b.id === bookingId);
+      const legacyPhotos = booking?.conditionPhotos || [];
       return {
         accessoriesChecked: new Array(accLen).fill(false),
-        photos: [],
+        lendPhotos: booking?.lendPhotos || legacyPhotos,
+        returnPhotos: booking?.returnPhotos || [],
         condition: null,
         note: '',
+        deductionAmount: '',
+        deductionNote: '',
       };
     }
     return checkStates[bookingId];
@@ -93,17 +101,22 @@ const ReturnCheckPage: React.FC = () => {
       t => t.id === bookings.find(b => b.id === bookingId)?.toolId
     );
     const state = getOrInitState(bookingId, tool?.accessories.length || 0);
-    if (state.photos.length >= 6) {
+    const photos = activeTab === 'lend' ? state.lendPhotos : state.returnPhotos;
+    if (photos.length >= 6) {
       Taro.showToast({ title: '最多上传6张', icon: 'none' });
       return;
     }
     Taro.chooseImage({
-      count: 6 - state.photos.length,
+      count: 6 - photos.length,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
         const newPhotos = res.tempFilePaths;
-        updateState(bookingId, { photos: [...state.photos, ...newPhotos] });
+        if (activeTab === 'lend') {
+          updateState(bookingId, { lendPhotos: [...state.lendPhotos, ...newPhotos] });
+        } else {
+          updateState(bookingId, { returnPhotos: [...state.returnPhotos, ...newPhotos] });
+        }
         Taro.showToast({ title: `已选择${newPhotos.length}张照片`, icon: 'success' });
       },
     });
@@ -121,8 +134,13 @@ const ReturnCheckPage: React.FC = () => {
       t => t.id === bookings.find(b => b.id === bookingId)?.toolId
     );
     const state = getOrInitState(bookingId, tool?.accessories.length || 0);
-    const newPhotos = state.photos.filter((_, i) => i !== photoIndex);
-    updateState(bookingId, { photos: newPhotos });
+    if (activeTab === 'lend') {
+      const newPhotos = state.lendPhotos.filter((_, i) => i !== photoIndex);
+      updateState(bookingId, { lendPhotos: newPhotos });
+    } else {
+      const newPhotos = state.returnPhotos.filter((_, i) => i !== photoIndex);
+      updateState(bookingId, { returnPhotos: newPhotos });
+    }
   };
 
   const handleConfirmLend = (booking: Booking) => {
@@ -145,7 +163,7 @@ const ReturnCheckPage: React.FC = () => {
         if (res.confirm) {
           updateBookingStatus(booking.id, 'borrowed', {
             accessoriesChecked: state.accessoriesChecked,
-            conditionPhotos: state.photos,
+            lendPhotos: state.lendPhotos,
           });
           Taro.showToast({ title: '借出确认成功', icon: 'success' });
         }
@@ -162,21 +180,37 @@ const ReturnCheckPage: React.FC = () => {
       Taro.showToast({ title: '请选择归还状态', icon: 'none' });
       return;
     }
+    if ((state.condition === 'damaged' || state.condition === 'lost') && !state.deductionAmount) {
+      Taro.showToast({ title: '请填写扣款金额', icon: 'none' });
+      return;
+    }
+    const deductionAmount = state.deductionAmount ? Number(state.deductionAmount) : 0;
+    if (isNaN(deductionAmount) || deductionAmount < 0) {
+      Taro.showToast({ title: '扣款金额无效', icon: 'none' });
+      return;
+    }
+    if (deductionAmount > booking.deposit) {
+      Taro.showToast({ title: '扣款不能超过押金', icon: 'none' });
+      return;
+    }
+
+    const conditionText = state.condition === 'good' ? '完好' : state.condition === 'damaged' ? '有损坏' : '丢失';
+    const extraContent = deductionAmount > 0 ? `\n扣款金额：¥${deductionAmount}\n应退押金：¥${booking.deposit - deductionAmount}` : '';
 
     Taro.showModal({
       title: '确认归还',
-      content: `确定「${booking.toolName}」归还完成？状态：${
-        state.condition === 'good' ? '完好' : state.condition === 'damaged' ? '有损坏' : '丢失'
-      }`,
+      content: `确定「${booking.toolName}」归还完成？\n状态：${conditionText}${extraContent}`,
       confirmText: '确认归还',
       confirmColor: state.condition === 'lost' ? '#FF4D4F' : undefined,
       success: res => {
         if (res.confirm) {
           updateBookingStatus(booking.id, 'returned', {
             accessoriesChecked: state.accessoriesChecked,
-            conditionPhotos: state.photos,
+            returnPhotos: state.returnPhotos,
             returnCondition: state.condition!,
             returnNote: state.note,
+            deductionAmount: deductionAmount > 0 ? deductionAmount : undefined,
+            deductionNote: state.deductionNote || undefined,
           });
           Taro.showToast({ title: '归还登记成功', icon: 'success' });
         }
@@ -291,20 +325,20 @@ const ReturnCheckPage: React.FC = () => {
         <View className={styles.section}>
           <Text className={styles.sectionTitle}>
             <Text className={styles.sectionIcon}>📷</Text>
-            外观拍照记录
+            {activeTab === 'lend' ? '借出时外观拍照' : '归还时外观拍照'}
           </Text>
           <View className={styles.photoSection}>
             <Text className={styles.photoLabel}>
               建议多角度拍摄（正面、侧面、开关、接口等），最多6张
             </Text>
             <View className={styles.photoGrid}>
-              {state.photos.map((photo, idx) => (
+              {(activeTab === 'lend' ? state.lendPhotos : state.returnPhotos).map((photo, idx) => (
                 <View key={idx} className={classnames(styles.photoItem, styles.filled)}>
                   <Image
                     src={photo}
                     mode="aspectFill"
                     style={{ width: '100%', height: '100%' }}
-                    onClick={() => handlePhotoPreview(state.photos, idx)}
+                    onClick={() => handlePhotoPreview(activeTab === 'lend' ? state.lendPhotos : state.returnPhotos, idx)}
                   />
                   <View
                     className={styles.photoDelete}
@@ -314,7 +348,7 @@ const ReturnCheckPage: React.FC = () => {
                   </View>
                 </View>
               ))}
-              {state.photos.length < 6 && (
+              {(activeTab === 'lend' ? state.lendPhotos : state.returnPhotos).length < 6 && (
                 <View
                   className={styles.photoItem}
                   onClick={() => handlePhotoClick(booking.id)}
@@ -326,6 +360,13 @@ const ReturnCheckPage: React.FC = () => {
             </View>
           </View>
         </View>
+
+        {activeTab === 'return' && state.lendPhotos.length > 0 && state.returnPhotos.length === 0 && (
+          <View className={styles.photoHint}>
+            <Text className={styles.photoHintIcon}>💡</Text>
+            <Text className={styles.photoHintText}>借出时已拍 {state.lendPhotos.length} 张照片，归还时未补拍也不会丢失</Text>
+          </View>
+        )}
 
         {activeTab === 'return' && (
           <>
@@ -350,6 +391,53 @@ const ReturnCheckPage: React.FC = () => {
                 ))}
               </View>
             </View>
+
+            {(state.condition === 'damaged' || state.condition === 'lost') && (
+              <View className={styles.section}>
+                <Text className={styles.sectionTitle}>
+                  <Text className={styles.sectionIcon}>💰</Text>
+                  损坏/丢失处理
+                </Text>
+                <View className={styles.deductionSection}>
+                  <View className={styles.deductionRow}>
+                    <Text className={styles.deductionLabel}>押金金额</Text>
+                    <Text className={styles.deductionValue}>¥{booking.deposit}</Text>
+                  </View>
+                  <View className={styles.deductionRow}>
+                    <Text className={styles.deductionLabel}>扣款金额</Text>
+                    <Input
+                      className={styles.deductionInput}
+                      type="digit"
+                      placeholder="请输入扣款金额"
+                      value={state.deductionAmount}
+                      onInput={e => updateState(booking.id, { deductionAmount: e.detail.value })}
+                    />
+                  </View>
+                  {state.deductionAmount && !isNaN(Number(state.deductionAmount)) && (
+                    <View className={styles.deductionRow}>
+                      <Text className={styles.deductionLabel}>应退押金</Text>
+                      <Text className={styles.deductionRefund}>
+                        ¥{Math.max(0, booking.deposit - Number(state.deductionAmount))}
+                      </Text>
+                    </View>
+                  )}
+                  <View className={styles.deductionNoteWrap}>
+                    <Text className={styles.deductionLabel}>处理说明</Text>
+                    <Textarea
+                      className={styles.deductionNote}
+                      placeholder={
+                        state.condition === 'lost'
+                          ? '请说明丢失原因、赔偿方案等...'
+                          : '请描述损坏部位、程度、处理方案等...'
+                      }
+                      value={state.deductionNote}
+                      onInput={e => updateState(booking.id, { deductionNote: e.detail.value })}
+                      maxlength={200}
+                    />
+                  </View>
+                </View>
+              </View>
+            )}
 
             <View className={styles.section}>
               <Text className={styles.sectionTitle}>

@@ -228,6 +228,50 @@
   background: $color-bg-card;
 }
 
+.maintenanceAlert {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  padding: $spacing-md;
+  background: rgba(250, 173, 20, 0.1);
+  border-radius: $radius-md;
+  border-left: 6rpx solid $color-warning;
+  margin-bottom: $spacing-md;
+}
+
+.maintenanceIcon {
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.maintenanceContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.maintenanceTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+  margin-bottom: 4rpx;
+}
+
+.maintenanceText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
+.deductionAmount {
+  color: $color-error !important;
+  font-weight: $font-weight-semibold;
+}
+
+.refundAmount {
+  color: $color-success !important;
+  font-weight: $font-weight-bold;
+}
+
 .purposeBox {
   padding: $spacing-sm $spacing-md;
   background: $color-bg-hover;
